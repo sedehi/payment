@@ -1,23 +1,28 @@
 {
-    "name": "sedehi/payment",
-    "description": "",
-    "authors": [
-        {
-            "name": "Navid Sedehi",
-            "email": "navid.sedehi@gmail.com"
-        }
+  "name": "sedehi/payment",
+  "description": "",
+  "keywords": [
+    "laravel",
+    "payment"
+
+  ],
+  "authors": [
+    {
+      "name": "Navid Sedehi",
+      "email": "navid.sedehi@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "illuminate/support": "4.2.*"
+  },
+  "autoload": {
+    "classmap": [
+      "src/migrations"
     ],
-    "require": {
-        "php": ">=5.3.0",
-        "illuminate/support": "4.2.*"
-    },
-    "autoload": {
-        "classmap": [
-            "src/migrations"
-        ],
-        "psr-0": {
-            "Sedehi\\Payment\\": "src/"
-        }
-    },
-    "minimum-stability": "stable"
+    "psr-0": {
+      "Sedehi\\Payment\\": "src/"
+    }
+  },
+  "minimum-stability": "stable"
 }
