@@ -40,6 +40,12 @@ class PaymentConfig
                 $config['request_url'] = Config::get('payment::providers.zarinpal.servers.'.$config["server"].'.request_url');
 
                 break;
+            case 'parsian':
+                $config['terminalId']    = Config::get('payment::providers.parsian.terminalId');
+                $config['webserviceUrl'] = Config::get('payment::providers.parsian.webserviceUrl');
+                $config['gateUrl']       = Config::get('payment::providers.parsian.gateUrl');
+
+                break;
             default:
                 throw new Exception('تنظیمات سرویس دهندی موردنظر یافت نشد');
         }

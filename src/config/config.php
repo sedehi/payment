@@ -9,7 +9,7 @@ return [
 
     'currency' => 'rial',
 
-    'callback_url' => 'http://payment.dev:8080/return',
+    'callback_url' => 'http://develop.dev:8080/return',
 
     'providers' => [
 
@@ -21,18 +21,25 @@ return [
         ],
 
         'parsian' => [
-            'pin'           => '',
-            'webserviceUrl' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx'
+            'terminalId'    => 'xxxxxx',
+            'webserviceUrl' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx',
+            'gateUrl'       => 'https://pec.shaparak.ir/pecpaymentgateway/default.aspx?au='
+        ],
+
+        'pasargad' => [
+            'terminalId' => 'xxxxx',
+            'merchantId' => 'xxxxx',
+            'gateUrl'    => 'https://pep.shaparak.ir/gateway.aspx',
+            'verifyUrl'  => 'https://pep.shaparak.ir/VerifyPayment.aspx',
+            'checkUrl'   => 'https://pep.shaparak.ir/CheckTransactionResult.aspx'
+
         ],
 
         'zarinpal' => [
-            'MerchantID' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-
+            'MerchantID'  => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
             'payment_url' => 'https://www.zarinpal.com/pg/StartPay/',
-
-            'server' => 'iran',
-
-            'servers' => [
+            'server'      => 'iran',
+            'servers'     => [
                 'germany' => [
                     'request_url' => 'https://de.zarinpal.com/pg/services/WebGate/wsdl',
                 ],
@@ -44,7 +51,7 @@ return [
         ],
 
         'jahanpay' => [
-            'api'         => 'gt33345g394',
+            'api'         => 'xxxxxxxx',
             'payment_url' => 'http://www.jahanpay.com/webservice?wsdl',
             'request_url' => 'http://www.jahanpay.com/pay_invoice/',
         ],
