@@ -15,25 +15,25 @@ class PaylineException extends PaymentException
 
     public static $errors = [
         'send'   => [
-            -1 => 'api ارسالی با نوع api تعریف شده در payline سازگار نیست',
+            -1  => 'api ارسالی با نوع api تعریف شده در payline سازگار نیست',
             -2  => 'amount مقدار داده عددی نمی باشد و یا کمتر از 1000 ریال است',
             -3  => 'مقدار redirect رشته null است',
             -4  => 'درگاهی با اطلاعات ارسالی شما یافت نشد و یا در حال انتظار می باشد'
         ],
         'get'   => [
-            421 => 'IP نامعتبر است',
-            51  => 'تراکنش تکراری است',
-            54  => 'تراکنش مرجع موجود نیست',
-            55  => 'تراکنش نامعتبر است',
-            61  => 'خطا در واریز'
+            -1  => 'api ارسالی با نوع api تعریف شده در payline سازگار نیست',
+            -2  => 'trans_id ارسال شده معتبر نمی باشد',
+            -3  => 'id_get ارسالی معتبر نمی باشد',
+            -4  => 'چنین تراکنشی در سیستم وجود ندارد و یا موفقیت آمیز نبوده است',
+             1  => 'تراکنش موفقیت آمیز بوده است'
         ]
     ];
 
 
 
-    public function __construct($errorId)
+    public function __construct($request , $errorId)
     {
-        parent::__construct(@self::$errors[$errorId], $errorId);
+        parent::__construct(@self::$errors[$request][$errorId], $errorId);
     }
 
 }

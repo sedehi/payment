@@ -10,10 +10,11 @@ namespace Sedehi\Payment\Payline;
 
 use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
+use Sedehi\Payment\PaymentInterface;
 use Sedehi\Payment\PaymentDB;
 use Sedehi\Payment\PaymentLog;
 
-class Payline extends PaymentAbstract
+class Payline extends PaymentAbstract implements PaymentInterface
 {
 
     private $terminalId;
