@@ -1,8 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Navid Sedehi
- * Date: 6/1/2015
+ * User: Majid Ghaemifar
+ * Date: 12/07/2015
  * Time: 7:25 PM
  */
 
@@ -17,15 +17,18 @@ use Sedehi\Payment\PaymentLog;
 class Payline extends PaymentAbstract implements PaymentInterface
 {
 
-    private $terminalId;
-    private $username;
-    private $password;
+    private $idGet;
+    private $transId;
+
+    private $terminalId = null;
+    private $username = null;
+    private $password = null;
 
     public $amount;
     public $description = '';
     public $callBackUrl;
     public $orderId     = null;
-    public $authority;
+    public $authority = null;
 
     public function __construct($config)
     {

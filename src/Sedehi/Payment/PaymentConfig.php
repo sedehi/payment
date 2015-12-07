@@ -28,10 +28,19 @@ class PaymentConfig
                 break;
             case 'payline':
 
-                $config['api']                = Config::get('payment::providers.payline.api');
-                $config['request_url']        = Config::get('payment::providers.payline.request_url');
-                $config['second_request_url'] = Config::get('payment::providers.payline.second_request_url');
-                $config['verify_request_url'] = Config::get('payment::providers.payline.get_request_url');
+                if(Config::get('payment::test'))
+                {
+                    $config['api']                = Config::get('payment::test_providers.payline.api');
+                    $config['request_url']        = Config::get('payment::test_providers.payline.request_url');
+                    $config['second_request_url'] = Config::get('payment::test_providers.payline.second_request_url');
+                    $config['verify_request_url'] = Config::get('payment::test_providers.payline.verify_request_url');
+                }else{
+                    $config['api']                = Config::get('payment::providers.payline.api');
+                    $config['request_url']        = Config::get('payment::providers.payline.request_url');
+                    $config['second_request_url'] = Config::get('payment::providers.payline.second_request_url');
+                    $config['verify_request_url'] = Config::get('payment::providers.payline.verify_request_url');
+                }
+
                 break;
             case 'zarinpal':
                 $config['server']      = Config::get('payment::providers.zarinpal.server');

@@ -16,6 +16,7 @@ use Input;
 use Sedehi\Payment\Parsian\Parsian;
 use SoapClient;
 use Sedehi\Payment\Mellat\Mellat;
+use Sedehi\Payment\Payline\Payline;
 use Sedehi\Payment\PaymentDB;
 
 class Payment
