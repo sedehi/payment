@@ -17,12 +17,10 @@ use Sedehi\Payment\PaymentLog;
 class Payline extends PaymentAbstract implements PaymentInterface
 {
 
-    private $idGet;
-    private $transId;
-
-    private $terminalId = null;
-    private $username = null;
-    private $password = null;
+    private $api;
+    private $requestUrl;
+    private $secondRequestUrl;
+    private $verifyRequestUrl;
 
     public $amount;
     public $description = '';
@@ -32,14 +30,15 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
     public function __construct($config)
     {
-        $this->terminalId    = $config['terminalId'];
-        $this->username      = $config['username'];
-        $this->password      = $config['password'];
-        $this->webserviceUrl = $config['webserviceUrl'];
+        $this->api              = $config['api'];
+        $this->requestUrl       = $config['request_url'];
+        $this->secondRequestUrl = $config['second_request_url'];
+        $this->verifyRequestUrl = $config['verify_request_url'];
     }
 
     public function request()
     {
+        dd('ok');
         $this->newTransaction();
         $callBackUrl = $this->buildQuery($this->callBackUrl, ['trans_id' => $this->transaction->id]);
         $fields      = [
@@ -107,104 +106,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
     public function reversal()
     {
-        $reversalResponse = $this->bpReversalRequest($this->transaction, $this->reference);
 
-        if ($reversalResponse->return != '48') {
-            $this->newLog($this->transaction->id, $reversalResponse->return,
-                          MellatException::$errors[$reversalResponse->return]);
-            throw new MellatException($reversalResponse->return);
-        }
-
-        return true;
     }
 
-    private function bpVerifyRequest($transaction, $saleReferenceId)
-    {
-
-
-        $fields = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpVerifyRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
-        }
-
-        return $response->return;
-    }
-
-    private function bpSettleRequest($transaction, $saleReferenceId)
-    {
-
-
-        $fields = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpSettleRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
-        }
-
-        return $response->return;
-    }
-
-    private function bpInquiryRequest($transaction, $saleReferenceId)
-    {
-
-        $soap = new SoapClient($this->request_url);
-
-        $fields   = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-        $response = $soap->bpInquiryRequest($fields);
-
-        return $response;
-    }
-
-    private function bpReversalRequest($transaction, $saleReferenceId)
-    {
-
-
-        $fields = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpReversalRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
-        }
-
-        return;
-    }
 }

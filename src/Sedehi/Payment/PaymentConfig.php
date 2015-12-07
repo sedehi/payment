@@ -15,7 +15,7 @@ class PaymentConfig
 
     public static function get($provider)
     {
-
+dd($provider);
         $config = array();
         switch ($provider) {
             case 'mellat':
