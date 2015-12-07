@@ -8,9 +8,9 @@
 
 namespace Sedehi\Payment\Mellat;
 
-use Exception;
+use Sedehi\Payment\PaymentException;
 
-class MellatException extends Exception
+class MellatException extends PaymentException
 {
 
     public static $errors = array(
