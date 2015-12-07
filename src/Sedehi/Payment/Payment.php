@@ -23,7 +23,7 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers = ['jahanpay', 'mellat'];
+    protected $providers = ['jahanpay', 'mellat' , 'payline'];
     protected $transaction;
 
     public function __construct()
@@ -41,6 +41,10 @@ class Payment
         switch ($provider) {
             case 'mellat':
                 $this->provider = new Mellat($this->config);
+                break;
+
+            case 'payline':
+                $this->provider = new Payline($this->config);
                 break;
 
             default:
