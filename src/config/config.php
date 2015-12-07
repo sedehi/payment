@@ -20,6 +20,11 @@ return [
             'get_request_url'    => 'http://payline.ir/payment/gateway-result-second',
         ],
 
+        'parsian' => [
+            'pin'           => '',
+            'webserviceUrl' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx'
+        ],
+
         'zarinpal' => [
             'MerchantID' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
 
@@ -45,9 +50,9 @@ return [
         ],
 
         'mellat' => [
-            'terminalId'    => '1844998',
-            'username'      => 'x7962',
-            'password'      => '41259193',
+            'terminalId'    => 'xxxxxxx',
+            'username'      => 'xxxxxxx',
+            'password'      => 'xxxxxxx',
             'webserviceUrl' => 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl',
         ],
 
