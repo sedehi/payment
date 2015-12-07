@@ -1,33 +1,26 @@
 <?php
+
+
 /**
  * Created by PhpStorm.
  * User: Navid
  * Date: 12/7/2015
- * Time: 10:35 PM
+ * Time: 11:23 PM
  */
 
-namespace Sedehi\Payment\Parsian;
 
+namespace Sedehi\Payment\Pasargad;
 
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
 
-class Parsian extends PaymentAbstract implements PaymentInterface
+class Pasargad extends PaymentAbstract implements PaymentInterface
 {
-
-    private $terminalId;
-
-    public $amount;
-    public $description = '';
-    public $callBackUrl;
-    public $orderId     = null;
-    public $authority;
 
     public function __construct($config)
     {
         $this->terminalId    = $config['terminalId'];
         $this->webserviceUrl = $config['webserviceUrl'];
-        $this->gateUrl       = $config['gateUrl'];
     }
 
     public function request()
@@ -44,4 +37,5 @@ class Parsian extends PaymentAbstract implements PaymentInterface
     {
         // TODO: Implement reversal() method.
     }
+
 }

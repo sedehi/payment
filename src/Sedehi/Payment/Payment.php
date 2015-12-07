@@ -13,6 +13,7 @@ use Config;
 use DB;
 use Exception;
 use Input;
+use Sedehi\Payment\Parsian\Parsian;
 use SoapClient;
 use Sedehi\Payment\Mellat\Mellat;
 use Sedehi\Payment\Payline\Payline;
@@ -24,7 +25,7 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers = ['jahanpay', 'mellat' , 'payline'];
+    protected $providers = ['jahanpay', 'mellat', 'parsian', 'payline'];
     protected $transaction;
 
     public function __construct()
@@ -42,6 +43,9 @@ class Payment
         switch ($provider) {
             case 'mellat':
                 $this->provider = new Mellat($this->config);
+                break;
+            case 'parsian':
+                $this->provider = new Parsian($this->config);
                 break;
 
             case 'payline':
