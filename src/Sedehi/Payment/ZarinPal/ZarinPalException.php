@@ -8,9 +8,10 @@
 
 namespace Sedehi\Payment\ZarinPal;
 
-use Exception;
+use Sedehi\Payment\PaymentException;
 
-class ZarinPalException extends Exception {
+class ZarinPalException extends PaymentException
+{
 
     protected $errors = array(
         -1  => 'اطلاعات ارسال شده ناقص است.',
@@ -26,9 +27,8 @@ class ZarinPalException extends Exception {
         101 => 'عملیات پرداخت با موفقیت انجام شده ولی قبلا عملیات PaymentVertification بر روی این تراکنش انجام شده است',
     );
 
-    public function __construct($errorId) {
-
-
+    public function __construct($errorId)
+    {
         parent::__construct(@$this->errors[$errorId], $errorId);
     }
 
