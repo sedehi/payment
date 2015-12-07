@@ -11,10 +11,11 @@ namespace Sedehi\Payment\Mellat;
 use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentDB;
+use Sedehi\Payment\PaymentInterface;
 use SoapClient;
 use Sedehi\Payment\PaymentLog;
 
-class Mellat extends PaymentAbstract
+class Mellat extends PaymentAbstract implements PaymentInterface
 {
 
     private $terminalId;
