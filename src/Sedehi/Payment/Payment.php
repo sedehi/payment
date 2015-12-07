@@ -24,7 +24,7 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers = ['jahanpay', 'mellat', 'parsian'];
+    protected $providers = ['jahanpay', 'mellat', 'parsian', 'payline'];
     protected $transaction;
 
     public function __construct()
@@ -45,6 +45,10 @@ class Payment
                 break;
             case 'parsian':
                 $this->provider = new Parsian($this->config);
+                break;
+
+            case 'payline':
+                $this->provider = new Payline($this->config);
                 break;
 
             default:
