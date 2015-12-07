@@ -15,6 +15,7 @@ use Exception;
 use Input;
 use SoapClient;
 use Sedehi\Payment\Mellat\Mellat;
+use Sedehi\Payment\Payline\Payline;
 use Sedehi\Payment\PaymentDB;
 
 class Payment

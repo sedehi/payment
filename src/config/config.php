@@ -64,7 +64,7 @@ return [
             'api'                => 'adxcv-zzadq-polkjsad-opp13opoz-1sdf455aadzmck1244567',
             'request_url'        => 'http://payline.ir/payment-test/gateway-send',
             'second_request_url' => 'http://payline.ir/payment-test/gateway-',
-            'get_request_url'    => 'http://payline.ir/payment-test/gateway-result-second',
+            'verify_request_url' => 'http://payline.ir/payment-test/gateway-result-second',
         ]
     ]
 ];
