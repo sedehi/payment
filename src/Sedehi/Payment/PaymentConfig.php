@@ -55,6 +55,14 @@ dd($provider);
                 $config['gateUrl']       = Config::get('payment::providers.parsian.gateUrl');
 
                 break;
+            case 'pasargad':
+                $config['terminalId'] = Config::get('payment::providers.pasargad.terminalId');
+                $config['merchantId'] = Config::get('payment::providers.pasargad.merchantId');
+                $config['gateUrl']    = Config::get('payment::providers.pasargad.gateUrl');
+                $config['verifyUrl']  = Config::get('payment::providers.pasargad.verifyUrl');
+                $config['checkUrl']   = Config::get('payment::providers.pasargad.checkUrl');
+
+                break;
             default:
                 throw new Exception('تنظیمات سرویس دهندی موردنظر یافت نشد');
         }

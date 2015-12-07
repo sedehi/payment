@@ -13,7 +13,7 @@ use Sedehi\Payment\PaymentException;
 class MellatException extends PaymentException
 {
 
-    public static $errors = array(
+    public static $errors = [
         11  => 'شماره کارت نامعتبر است',
         12  => 'موجودی کافی نیست',
         13  => 'رمز نادرست است',
@@ -58,7 +58,8 @@ class MellatException extends PaymentException
         54  => 'تراکنش مرجع موجود نیست',
         55  => 'تراکنش نامعتبر است',
         61  => 'خطا در واریز'
-    );
+
+    ];
 
     public function __construct($errorId)
     {
