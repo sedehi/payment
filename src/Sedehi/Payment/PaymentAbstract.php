@@ -67,6 +67,7 @@ abstract class PaymentAbstract
         }
     }
 
+
     public function transactionSetAuthority()
     {
         return DB::table(Config::get('payment::table'))
@@ -76,35 +77,42 @@ abstract class PaymentAbstract
 
     public function transactionSucceed()
     {
-        return DB::table(Config::get('payment::table'))
-                 ->where('id', $this->transaction->id)
-                 ->update(['reference' => $this->reference, 'status' => 1, 'card_number' => $this->cardNumber]);
+        $data = DB::table(Config::get('payment::table'))
+                  ->where('id', $this->transaction->id)
+                  ->update(['reference' => $this->reference, 'status' => 1, 'card_number' => $this->cardNumber]);
+
+        $this->updateTransaction();
+
+        return $data;
+    }
+
+    private function updateTransaction()
+    {
+        $this->transaction = DB::table(Config::get('payment::table'))->where('id', $this->transaction->id)->first();
     }
 
     public function transactionFind($authority)
     {
         $this->transaction = DB::table(Config::get('payment::table'))
-                                ->where('authority', $authority)
-                                ->where('status', 0)
-                                ->first();
+                               ->where('authority', $authority)
+                               ->where('status', 0)
+                               ->first();
 
-        if(is_null($this->transaction))
-        {
-            throw new PaymentException('تراکنش یافت نشد',1500);
+        if (is_null($this->transaction)) {
+            throw new PaymentException('تراکنش یافت نشد', 1500);
         }
     }
 
-    public function transactionFindById($id , $authority)
+    public function transactionFindById($id, $authority)
     {
         $this->transaction = DB::table(Config::get('payment::table'))
-                                ->where('id', $id)
-                                ->where('status', 0)
-                                ->where('authority', $authority)
-                                ->first();
+                               ->where('id', $id)
+                               ->where('status', 0)
+                               ->where('authority', $authority)
+                               ->first();
 
-        if(is_null($this->transaction))
-        {
-            throw new PaymentException('تراکنش یافت نشد',1500);
+        if (is_null($this->transaction)) {
+            throw new PaymentException('تراکنش یافت نشد', 1500);
         }
     }
 }
