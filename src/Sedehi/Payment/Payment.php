@@ -49,7 +49,8 @@ class Payment
                 break;
 
             case 'payline':
-                $this->provider = new Payline($this->config);
+                $this->config       = PaymentConfig::get($this->providerName);
+                $this->provider     = new Payline($this->config);
                 break;
 
             default:

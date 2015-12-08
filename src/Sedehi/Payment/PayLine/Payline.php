@@ -36,8 +36,10 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
     public function request()
     {
-        dd('ok');
         $this->newTransaction();
+
+        dd('done');
+
         $callBackUrl = $this->buildQuery($this->callBackUrl, ['trans_id' => $this->transaction->id]);
         $fields      = [
             'terminalId'     => $this->terminalId,
