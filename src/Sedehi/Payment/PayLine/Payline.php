@@ -8,9 +8,11 @@
 
 namespace Sedehi\Payment\Payline;
 
+use Input;
 use Redirect;
 use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
+use Sedehi\Payment\PaymentException;
 use Sedehi\Payment\PaymentInterface;
 
 class Payline extends PaymentAbstract implements PaymentInterface
@@ -21,11 +23,12 @@ class Payline extends PaymentAbstract implements PaymentInterface
     private $secondRequestUrl;
     private $verifyRequestUrl;
 
+    //private $reference;
+
     public $amount;
     public $description = '';
     public $callBackUrl;
     public $orderId;
-    public $authority;
 
     public function __construct($config)
     {
@@ -41,94 +44,96 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
         $callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
 
-        //dd($callBackUrl);
+        $response = $this->send();
 
-        $responseOne = $this->send($this->requestUrl , $this->api , $this->amount , urlencode($this->callBackUrl));
+        if($response > 0 && is_numeric($response)){
 
-        if($responseOne > 0 && is_numeric($responseOne)){
-
-            $this->authority = $responseOne;
+            $this->authority = $response;
             $this->transactionSetAuthority();
-            $go = $this->secondRequestUrl . $responseOne;
+            $go = $this->secondRequestUrl . $response;
             return Redirect::to($go);
 
         }else{
 
-            $this->newLog($this->transaction->id, $responseOne, PaylineException::$errors['send'][$responseOne]);
-            throw new PaylineException('send',$responseOne);
+            $this->newLog($response, PaylineException::$errors['send'][$response]);
+            throw new PaylineException('send',$response);
 
         }
-/*
-        $response = explode(',', $response->return);
-        if ($response[0] == 0) {
-            $this->authority = $response[1];
-            $this->transactionSetAuthority();
 
-            return new MellatRedirect($this->authority);
-        }
-        $this->newLog($this->transaction->id, $response[0], MellatException::$errors[$response[0]]);
-
-        throw new MellatException($response[0]);
-*/
     }
 
-    public function verify($transaction)
-    {dd($transaction);
+    public function verify()
+    {
+        $this->getTransaction();
+
+        if($this->reference > 0 && is_numeric($this->reference))
+        {
+            $verifyResponse = $this->get();
+
+        }else{
+
+            $this->newLog(1502, 'شماره پیگیری دریافتی معتبر نیست');
+            throw new PaymentException('شماره پیگیری دریافتی معتبر نیست' , 1502);
+        }
+
+        if(is_numeric($verifyResponse) && $verifyResponse == 1){
+
+            $this->transactionSucceed();
+            return dd($this->transaction);
+
+        }else{
+
+            $this->newLog($verifyResponse, PaylineException::$errors['get'][$verifyResponse]);
+            throw new PaylineException('get',$verifyResponse);
+
+        }
+
+    }
+
+
+    private function send()
+    {
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$this->requestUrl);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$this->api&amount=$this->amount&redirect=" . urlencode($this->callBackUrl));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
+    }
+
+    private function get()
+    {
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$this->verifyRequestUrl);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$this->api&id_get=$this->authority&trans_id=$this->reference");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
+    }
+
+    private function getTransaction()
+    {
         $this->authority  = Input::get('id_get');
-        $this->reference  = Input::get('SaleReferenceId');
-        $this->cardNumber = Input::get('CardHolderPan');
-        if (Input::get('ResCode') == '0') {
+        $this->reference  = Input::get('trans_id');
+        $this->cardNumber = null;
 
-            $verifyResponse = $this->bpVerifyRequest($this->transaction, $this->reference);
-            if ($verifyResponse->return != '0') {
-                $this->newLog($this->transaction->id, $verifyResponse->return,
-                              MellatException::$errors[$verifyResponse->return]);
-                throw new MellatException($verifyResponse->return);
-            } else {
-                $settleResponse = $this->bpSettleRequest($this->transaction, $this->reference);
-                if ($settleResponse->return == '0' || $settleResponse->return == '45') {
-                    $this->transactionSucceed();
+        if(Input::has('transaction_id'))
+        {
+            $this->transactionFindById(Input::get('transaction_id'),$this->authority);
 
-                    return $this->transaction;
-                } else {
-                    $this->newLog($this->transaction->id, $settleResponse->return,
-                                  MellatException::$errors[$settleResponse->return]);
-                    throw new MellatException($settleResponse->return);
-                }
-            }
+        }else{
+
+            $this->transactionFind($this->authority);
         }
-        $this->newLog($this->transaction->id, Input::get('ResCode'), MellatException::$errors[Input::get('ResCode')]);
-        throw new MellatException(Input::get('ResCode'));
-    }
-
-
-    private function send($url,$api,$amount,$redirect)
-    {
-        $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL,$url);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$api&amount=$amount&redirect=$redirect");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-        $res = curl_exec($ch);
-        curl_close($ch);
-        return $res;
-    }
-
-    private function get($url,$api,$trans_id,$id_get)
-    {
-        $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL,$url);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$api&id_get=$id_get&trans_id=$trans_id");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-        $res = curl_exec($ch);
-        curl_close($ch);
-        return $res;
     }
 
     public function reversal()
     {
-
+        throw new PaymentException('این تابع توسط پی لاین پشتیبانی نمی شود',1501);
     }
 
 }

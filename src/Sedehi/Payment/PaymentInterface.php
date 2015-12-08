@@ -14,7 +14,7 @@ interface PaymentInterface
 
     public function request();
 
-    public function verify($transaction);
+    public function verify();
 
     public function reversal();
 }
