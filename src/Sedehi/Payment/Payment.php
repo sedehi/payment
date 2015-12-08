@@ -14,6 +14,7 @@ use DB;
 use Exception;
 use Input;
 use Sedehi\Payment\Parsian\Parsian;
+use Sedehi\Payment\Pasargad\Pasargad;
 use SoapClient;
 use Sedehi\Payment\Mellat\Mellat;
 use Sedehi\Payment\Payline\Payline;
@@ -46,6 +47,9 @@ class Payment
                 break;
             case 'parsian':
                 $this->provider = new Parsian($this->config);
+                break;
+            case 'pasargad':
+                $this->provider = new Pasargad($this->config);
                 break;
 
             case 'payline':
