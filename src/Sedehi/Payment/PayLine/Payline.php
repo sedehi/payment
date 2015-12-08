@@ -8,6 +8,7 @@
 
 namespace Sedehi\Payment\Payline;
 
+use Redirect;
 use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
@@ -15,53 +16,49 @@ use Sedehi\Payment\PaymentInterface;
 class Payline extends PaymentAbstract implements PaymentInterface
 {
 
-    private $idGet;
-    private $transId;
-
-    private $terminalId = null;
-    private $username = null;
-    private $password = null;
+    private $api;
+    private $requestUrl;
+    private $secondRequestUrl;
+    private $verifyRequestUrl;
 
     public $amount;
     public $description = '';
     public $callBackUrl;
-    public $orderId     = null;
-    public $authority = null;
+    public $orderId;
+    public $authority;
 
     public function __construct($config)
     {
-        $this->terminalId    = $config['terminalId'];
-        $this->username      = $config['username'];
-        $this->password      = $config['password'];
-        $this->webserviceUrl = $config['webserviceUrl'];
+        $this->api              = $config['api'];
+        $this->requestUrl       = $config['request_url'];
+        $this->secondRequestUrl = $config['second_request_url'];
+        $this->verifyRequestUrl = $config['verify_request_url'];
     }
 
     public function request()
     {
         $this->newTransaction();
-        $callBackUrl = $this->buildQuery($this->callBackUrl, ['trans_id' => $this->transaction->id]);
-        $fields      = [
-            'terminalId'     => $this->terminalId,
-            'userName'       => $this->username,
-            'userPassword'   => $this->password,
-            'orderId'        => $this->transaction->id,
-            'amount'         => $this->transaction->amount,
-            'localDate'      => date('Ymd'),
-            'localTime'      => date('His'),
-            'additionalData' => $this->transaction->description,
-            'callBackUrl'    => $callBackUrl,
-            'payerId'        => 0,
-        ];
 
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpPayRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
+        $callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
+
+        //dd($callBackUrl);
+
+        $responseOne = $this->send($this->requestUrl , $this->api , $this->amount , urlencode($this->callBackUrl));
+
+        if($responseOne > 0 && is_numeric($responseOne)){
+
+            $this->authority = $responseOne;
+            $this->transactionSetAuthority();
+            $go = $this->secondRequestUrl . $responseOne;
+            return Redirect::to($go);
+
+        }else{
+
+            $this->newLog($this->transaction->id, $responseOne, PaylineException::$errors['send'][$responseOne]);
+            throw new PaylineException('send',$responseOne);
+
         }
-        $response = $soap->bpPayRequest($fields);
-
+/*
         $response = explode(',', $response->return);
         if ($response[0] == 0) {
             $this->authority = $response[1];
@@ -72,11 +69,12 @@ class Payline extends PaymentAbstract implements PaymentInterface
         $this->newLog($this->transaction->id, $response[0], MellatException::$errors[$response[0]]);
 
         throw new MellatException($response[0]);
+*/
     }
 
     public function verify($transaction)
-    {
-        $this->authority  = Input::get('RefId');
+    {dd($transaction);
+        $this->authority  = Input::get('id_get');
         $this->reference  = Input::get('SaleReferenceId');
         $this->cardNumber = Input::get('CardHolderPan');
         if (Input::get('ResCode') == '0') {
@@ -103,106 +101,34 @@ class Payline extends PaymentAbstract implements PaymentInterface
         throw new MellatException(Input::get('ResCode'));
     }
 
+
+    private function send($url,$api,$amount,$redirect)
+    {
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$api&amount=$amount&redirect=$redirect");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
+    }
+
+    private function get($url,$api,$trans_id,$id_get)
+    {
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$api&id_get=$id_get&trans_id=$trans_id");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
+    }
+
     public function reversal()
     {
-        $reversalResponse = $this->bpReversalRequest($this->transaction, $this->reference);
 
-        if ($reversalResponse->return != '48') {
-            $this->newLog($this->transaction->id, $reversalResponse->return,
-                          MellatException::$errors[$reversalResponse->return]);
-            throw new MellatException($reversalResponse->return);
-        }
-
-        return true;
     }
 
-    private function bpVerifyRequest($transaction, $saleReferenceId)
-    {
-
-
-        $fields = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpVerifyRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
-        }
-
-        return $response->return;
-    }
-
-    private function bpSettleRequest($transaction, $saleReferenceId)
-    {
-
-
-        $fields = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpSettleRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
-        }
-
-        return $response->return;
-    }
-
-    private function bpInquiryRequest($transaction, $saleReferenceId)
-    {
-
-        $soap = new SoapClient($this->request_url);
-
-        $fields   = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-        $response = $soap->bpInquiryRequest($fields);
-
-        return $response;
-    }
-
-    private function bpReversalRequest($transaction, $saleReferenceId)
-    {
-
-
-        $fields = array(
-            'terminalId'      => $this->terminalId,
-            'userName'        => $this->username,
-            'userPassword'    => $this->password,
-            'orderId'         => $transaction->id,
-            'saleOrderId'     => $transaction->id,
-            'saleReferenceId' => $saleReferenceId
-        );
-
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpReversalRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
-        }
-
-        return;
-    }
 }
