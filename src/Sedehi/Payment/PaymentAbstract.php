@@ -25,10 +25,10 @@ abstract class PaymentAbstract
         return strtolower(end($name));
     }
 
-    public function newLog($transactionId, $code, $message)
+    public function newLog($code, $message)
     {
         DB::table(Config::get('payment::table').'_log')->insert(array(
-                                                                    'transaction_id' => $transactionId,
+                                                                    'transaction_id' => $this->transaction->id,
                                                                     'code'           => $code,
                                                                     'message'        => $message,
                                                                     'updated_at'     => Carbon::now(),
