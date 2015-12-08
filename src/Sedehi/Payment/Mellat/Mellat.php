@@ -73,12 +73,12 @@ class Mellat extends PaymentAbstract implements PaymentInterface
 
     public function verify()
     {
-        $this->authority  = Input::get('RefId');
-        $this->reference  = Input::get('SaleReferenceId');
-        $this->cardNumber = Input::get('CardHolderPan');
+        $this->getTransaction();
+
         if (Input::get('ResCode') == '0') {
 
             $verifyResponse = $this->bpVerifyRequest();
+
             if ($verifyResponse->return != '0') {
                 $this->newLog($verifyResponse->return, MellatException::$errors[$verifyResponse->return]);
                 throw new MellatException($verifyResponse->return);
@@ -100,13 +100,11 @@ class Mellat extends PaymentAbstract implements PaymentInterface
 
     public function reversal()
     {
-        $this->authority  = Input::get('RefId');
-        $this->reference  = Input::get('SaleReferenceId');
-        $this->cardNumber = Input::get('CardHolderPan');
+        $this->getTransaction();
 
         $reversalResponse = $this->bpReversalRequest();
 
-        if ($reversalResponse->return != '48') {
+        if ($reversalResponse->return != '0') {
             $this->newLog($reversalResponse->return, MellatException::$errors[$reversalResponse->return]);
             throw new MellatException($reversalResponse->return);
         }
@@ -131,7 +129,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             $soap     = new SoapClient($this->webserviceUrl);
             $response = $soap->bpVerifyRequest($fields);
         } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
+            $this->newLog('SoapFault', $e->getMessage());
             throw $e;
         }
 
@@ -155,7 +153,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             $soap     = new SoapClient($this->webserviceUrl);
             $response = $soap->bpSettleRequest($fields);
         } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
+            $this->newLog('SoapFault', $e->getMessage());
             throw $e;
         }
 
@@ -167,7 +165,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
 
         $soap = new SoapClient($this->request_url);
 
-        $fields   = array(
+        $fields = array(
             'terminalId'      => $this->terminalId,
             'userName'        => $this->username,
             'userPassword'    => $this->password,
@@ -175,7 +173,14 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             'saleOrderId'     => $this->transaction->id,
             'saleReferenceId' => $this->reference
         );
-        $response = $soap->bpInquiryRequest($fields);
+        try {
+            $soap     = new SoapClient($this->webserviceUrl);
+            $response = $soap->bpInquiryRequest($fields);
+        } catch (SoapFault $e) {
+            $this->newLog('SoapFault', $e->getMessage());
+            throw $e;
+        }
+
 
         return $response;
     }
@@ -196,10 +201,24 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             $soap     = new SoapClient($this->webserviceUrl);
             $response = $soap->bpReversalRequest($fields);
         } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
+            $this->newLog('SoapFault', $e->getMessage());
             throw $e;
         }
 
         return;
+    }
+
+    private function getTransaction()
+    {
+        $this->authority  = Input::get('RefId');
+        $this->reference  = Input::get('SaleReferenceId');
+        $this->cardNumber = Input::get('CardHolderPan');
+
+        if (Input::has('transaction_id')) {
+            $this->transactionFindById(Input::get('transaction_id'), $this->authority);
+        } else {
+
+            $this->transactionFind($this->authority);
+        }
     }
 }

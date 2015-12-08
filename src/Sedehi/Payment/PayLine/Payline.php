@@ -23,8 +23,6 @@ class Payline extends PaymentAbstract implements PaymentInterface
     private $secondRequestUrl;
     private $verifyRequestUrl;
 
-    //private $reference;
-
     public $amount;
     public $description = '';
     public $callBackUrl;
@@ -46,72 +44,69 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
         $response = $this->send();
 
-        if($response > 0 && is_numeric($response)){
+        if ($response > 0 && is_numeric($response)) {
 
             $this->authority = $response;
             $this->transactionSetAuthority();
-            $go = $this->secondRequestUrl . $response;
-            return Redirect::to($go);
+            $go = $this->secondRequestUrl.$response;
 
-        }else{
+            return Redirect::to($go);
+        } else {
 
             $this->newLog($response, PaylineException::$errors['send'][$response]);
-            throw new PaylineException('send',$response);
-
+            throw new PaylineException('send', $response);
         }
-
     }
 
     public function verify()
     {
         $this->getTransaction();
 
-        if($this->reference > 0 && is_numeric($this->reference))
-        {
+        if ($this->reference > 0 && is_numeric($this->reference)) {
             $verifyResponse = $this->get();
-
-        }else{
+        } else {
 
             $this->newLog(1502, 'شماره پیگیری دریافتی معتبر نیست');
-            throw new PaymentException('شماره پیگیری دریافتی معتبر نیست' , 1502);
+            throw new PaymentException('شماره پیگیری دریافتی معتبر نیست', 1502);
         }
 
-        if(is_numeric($verifyResponse) && $verifyResponse == 1){
+        if (is_numeric($verifyResponse) && $verifyResponse == 1) {
 
             $this->transactionSucceed();
-            return dd($this->transaction);
 
-        }else{
+            return dd($this->transaction);
+        } else {
 
             $this->newLog($verifyResponse, PaylineException::$errors['get'][$verifyResponse]);
-            throw new PaylineException('get',$verifyResponse);
-
+            throw new PaylineException('get', $verifyResponse);
         }
-
     }
 
 
     private function send()
     {
         $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL,$this->requestUrl);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$this->api&amount=$this->amount&redirect=" . urlencode($this->callBackUrl));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($ch, CURLOPT_URL, $this->requestUrl);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,
+                    "api=$this->api&amount=$this->amount&redirect=".urlencode($this->callBackUrl));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($ch);
         curl_close($ch);
+
         return $res;
     }
 
     private function get()
     {
         $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL,$this->verifyRequestUrl);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$this->api&id_get=$this->authority&trans_id=$this->reference");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($ch, CURLOPT_URL, $this->verifyRequestUrl);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "api=$this->api&id_get=$this->authority&trans_id=$this->reference");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($ch);
         curl_close($ch);
+
         return $res;
     }
 
@@ -121,11 +116,9 @@ class Payline extends PaymentAbstract implements PaymentInterface
         $this->reference  = Input::get('trans_id');
         $this->cardNumber = null;
 
-        if(Input::has('transaction_id'))
-        {
-            $this->transactionFindById(Input::get('transaction_id'),$this->authority);
-
-        }else{
+        if (Input::has('transaction_id')) {
+            $this->transactionFindById(Input::get('transaction_id'), $this->authority);
+        } else {
 
             $this->transactionFind($this->authority);
         }
@@ -133,7 +126,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
     public function reversal()
     {
-        throw new PaymentException('این تابع توسط پی لاین پشتیبانی نمی شود',1501);
+        throw new PaymentException('این تابع توسط پی لاین پشتیبانی نمی شود', 1501);
     }
 
 }

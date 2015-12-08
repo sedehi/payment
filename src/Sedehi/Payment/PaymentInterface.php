@@ -17,4 +17,7 @@ interface PaymentInterface
     public function verify();
 
     public function reversal();
+
+
+
 }
