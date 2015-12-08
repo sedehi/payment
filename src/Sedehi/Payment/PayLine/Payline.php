@@ -23,8 +23,8 @@ class Payline extends PaymentAbstract implements PaymentInterface
     public $amount;
     public $description = '';
     public $callBackUrl;
-    public $orderId     = null;
-    public $authority = null;
+    public $orderId;
+    public $authority;
 
     public function __construct($config)
     {
@@ -38,29 +38,27 @@ class Payline extends PaymentAbstract implements PaymentInterface
     {
         $this->newTransaction();
 
-        dd('done');
-
         $callBackUrl = $this->buildQuery($this->callBackUrl, ['trans_id' => $this->transaction->id]);
-        $fields      = [
-            'terminalId'     => $this->terminalId,
-            'userName'       => $this->username,
-            'userPassword'   => $this->password,
-            'orderId'        => $this->transaction->id,
-            'amount'         => $this->transaction->amount,
-            'localDate'      => date('Ymd'),
-            'localTime'      => date('His'),
-            'additionalData' => $this->transaction->description,
-            'callBackUrl'    => $callBackUrl,
-            'payerId'        => 0,
-        ];
 
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpPayRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog($this->transaction->id, 'SoapFault', $e->getMessage());
-            throw $e;
+        //return \PaylineRequest::send($this->requestUrl , $this->api , $this->amount , $this->callBackUrl);
+
+        dd('ok');
+
+        function send($url,$api,$amount,$redirect){
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL,$url);
+            curl_setopt($ch,CURLOPT_POSTFIELDS,"api=$api&amount=$amount&redirect=$redirect");
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+            $res = curl_exec($ch);
+            curl_close($ch);
+            return $res;
         }
+
+        $a = send($this->requestUrl , $this->api , $this->amount , $this->callBackUrl);
+
+        dd($a);
+
         $response = $soap->bpPayRequest($fields);
 
         $response = explode(',', $response->return);

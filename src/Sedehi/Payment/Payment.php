@@ -40,6 +40,8 @@ class Payment
 
     private function setProvider($provider)
     {
+        $this->config       = PaymentConfig::get($this->providerName);
+
         switch ($provider) {
             case 'mellat':
                 $this->provider = new Mellat($this->config);
@@ -49,7 +51,6 @@ class Payment
                 break;
 
             case 'payline':
-                $this->config       = PaymentConfig::get($this->providerName);
                 $this->provider     = new Payline($this->config);
                 break;
 
