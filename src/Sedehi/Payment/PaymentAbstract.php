@@ -17,6 +17,9 @@ abstract class PaymentAbstract
 {
 
     protected $transaction;
+    protected $reference;
+    protected $authority;
+    protected $cardNumber;
 
     private function getCallName()
     {
@@ -78,4 +81,30 @@ abstract class PaymentAbstract
                  ->update(['reference' => $this->reference, 'status' => 1, 'card_number' => $this->cardNumber]);
     }
 
+    public function transactionFind($authority)
+    {
+        $this->transaction = DB::table(Config::get('payment::table'))
+                                ->where('authority', $authority)
+                                ->where('status', 0)
+                                ->first();
+
+        if(is_null($this->transaction))
+        {
+            throw new PaymentException('تراکنش یافت نشد',1500);
+        }
+    }
+
+    public function transactionFindById($id , $authority)
+    {
+        $this->transaction = DB::table(Config::get('payment::table'))
+                                ->where('id', $id)
+                                ->where('status', 0)
+                                ->where('authority', $authority)
+                                ->first();
+
+        if(is_null($this->transaction))
+        {
+            throw new PaymentException('تراکنش یافت نشد',1500);
+        }
+    }
 }
