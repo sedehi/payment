@@ -12,7 +12,7 @@ namespace Sedehi\Payment\Mellat;
 class MellatRedirect {
 
 
-    public function __construct($authority) {
+    public static function to($authority) {
 
         return '<html>
     <body>

@@ -12,6 +12,7 @@ use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
 use SoapClient;
+use Input;
 
 class Mellat extends PaymentAbstract implements PaymentInterface
 {
@@ -33,38 +34,19 @@ class Mellat extends PaymentAbstract implements PaymentInterface
         $this->webserviceUrl = $config['webserviceUrl'];
     }
 
+
     public function request()
     {
         $this->newTransaction();
-        $callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
-        $fields      = [
-            'terminalId'     => $this->terminalId,
-            'userName'       => $this->username,
-            'userPassword'   => $this->password,
-            'orderId'        => $this->transaction->id,
-            'amount'         => $this->transaction->amount,
-            'localDate'      => date('Ymd'),
-            'localTime'      => date('His'),
-            'additionalData' => $this->transaction->description,
-            'callBackUrl'    => $callBackUrl,
-            'payerId'        => 0,
-        ];
 
-        try {
-            $soap     = new SoapClient($this->webserviceUrl);
-            $response = $soap->bpPayRequest($fields);
-        } catch (SoapFault $e) {
-            $this->newLog('SoapFault', $e->getMessage());
-            throw $e;
-        }
-        $response = $soap->bpPayRequest($fields);
+        $response = $this->bpPayRequest();
 
         $response = explode(',', $response->return);
-        if ($response[0] == 0) {
+        if ($response[0] == '0') {
             $this->authority = $response[1];
             $this->transactionSetAuthority();
 
-            return new MellatRedirect($this->authority);
+            return MellatRedirect::to($this->authority);
         }
         $this->newLog($response[0], MellatException::$errors[$response[0]]);
 
@@ -102,14 +84,41 @@ class Mellat extends PaymentAbstract implements PaymentInterface
     {
         $this->getTransaction();
 
-        $reversalResponse = $this->bpReversalRequest();
+        $Response = $this->bpReversalRequest();
 
-        if ($reversalResponse->return != '0') {
-            $this->newLog($reversalResponse->return, MellatException::$errors[$reversalResponse->return]);
-            throw new MellatException($reversalResponse->return);
+        if ($Response->return != '0') {
+            $this->newLog($Response->return, MellatException::$errors[$Response->return]);
+            throw new MellatException($Response->return);
         }
 
-        return true;
+        return $Response;
+    }
+
+    private function bpPayRequest()
+    {
+        $callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
+        $fields      = [
+            'terminalId'     => $this->terminalId,
+            'userName'       => $this->username,
+            'userPassword'   => $this->password,
+            'orderId'        => $this->transaction->id,
+            'amount'         => $this->transaction->amount,
+            'localDate'      => date('Ymd'),
+            'localTime'      => date('His'),
+            'additionalData' => $this->transaction->description,
+            'callBackUrl'    => $callBackUrl,
+            'payerId'        => 0,
+        ];
+
+        try {
+            $soap     = new SoapClient($this->webserviceUrl);
+            $response = $soap->bpPayRequest($fields);
+        } catch (SoapFault $e) {
+            $this->newLog('SoapFault', $e->getMessage());
+            throw $e;
+        }
+
+        return $response;
     }
 
     private function bpVerifyRequest()
@@ -133,7 +142,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             throw $e;
         }
 
-        return $response->return;
+        return $response;
     }
 
     private function bpSettleRequest()
@@ -157,7 +166,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             throw $e;
         }
 
-        return $response->return;
+        return $response;
     }
 
     private function bpInquiryRequest()
@@ -205,7 +214,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             throw $e;
         }
 
-        return;
+        return $response;
     }
 
     private function getTransaction()
