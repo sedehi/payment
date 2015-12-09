@@ -13,6 +13,7 @@ use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
 use SoapClient;
 use Input;
+use SoapFault;
 
 class Mellat extends PaymentAbstract implements PaymentInterface
 {
@@ -96,8 +97,8 @@ class Mellat extends PaymentAbstract implements PaymentInterface
 
     private function bpPayRequest()
     {
-        $callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
-        $fields      = [
+        $this->callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
+        $fields            = [
             'terminalId'     => $this->terminalId,
             'userName'       => $this->username,
             'userPassword'   => $this->password,
@@ -106,7 +107,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             'localDate'      => date('Ymd'),
             'localTime'      => date('His'),
             'additionalData' => $this->transaction->description,
-            'callBackUrl'    => $callBackUrl,
+            'callBackUrl'    => $this->callBackUrl,
             'payerId'        => 0,
         ];
 
@@ -224,10 +225,10 @@ class Mellat extends PaymentAbstract implements PaymentInterface
         $this->cardNumber = Input::get('CardHolderPan');
 
         if (Input::has('transaction_id')) {
-            $this->transactionFindById(Input::get('transaction_id'), $this->authority);
+            $this->transactionFindByIdAndAuthority(Input::get('transaction_id'), $this->authority);
         } else {
 
-            $this->transactionFind($this->authority);
+            $this->transactionFindByAuthority($this->authority);
         }
     }
 }

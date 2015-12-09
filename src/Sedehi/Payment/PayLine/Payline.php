@@ -40,7 +40,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
     {
         $this->newTransaction();
 
-        $callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
+        $this->callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
 
         $response = $this->send();
 
@@ -73,8 +73,8 @@ class Payline extends PaymentAbstract implements PaymentInterface
         if (is_numeric($verifyResponse) && $verifyResponse == 1) {
 
             $this->transactionSucceed();
-            return $this->transaction;
 
+            return $this->transaction;
         } else {
 
             $this->newLog($verifyResponse, PaylineException::$errors['get'][$verifyResponse]);
@@ -87,7 +87,8 @@ class Payline extends PaymentAbstract implements PaymentInterface
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->requestUrl);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "api=$this->api&amount=$this->amount&redirect=".urlencode($this->callBackUrl));
+        curl_setopt($ch, CURLOPT_POSTFIELDS,
+                    "api=$this->api&amount=$this->amount&redirect=".urlencode($this->callBackUrl));
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($ch);
@@ -116,10 +117,10 @@ class Payline extends PaymentAbstract implements PaymentInterface
         $this->cardNumber = null;
 
         if (Input::has('transaction_id')) {
-            $this->transactionFindById(Input::get('transaction_id'), $this->authority);
+            $this->transactionFindByIdAndAuthority(Input::get('transaction_id'), $this->authority);
         } else {
 
-            $this->transactionFind($this->authority);
+            $this->transactionFindByAuthority($this->authority);
         }
     }
 

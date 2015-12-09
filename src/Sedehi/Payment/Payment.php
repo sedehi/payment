@@ -15,10 +15,9 @@ use Exception;
 use Input;
 use Sedehi\Payment\Parsian\Parsian;
 use Sedehi\Payment\Pasargad\Pasargad;
-use SoapClient;
 use Sedehi\Payment\Mellat\Mellat;
 use Sedehi\Payment\Payline\Payline;
-use Sedehi\Payment\PaymentDB;
+use Sedehi\Payment\JahanPay\JahanPay;
 
 class Payment
 {
@@ -32,7 +31,7 @@ class Payment
     public function __construct()
     {
         if (!extension_loaded('soap')) {
-            throw new Exception('soap is not enabled on your server');
+            throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
         }
         $this->providerName = Config::get('payment::default_provider');
         $this->config       = PaymentConfig::get($this->providerName);
@@ -41,7 +40,7 @@ class Payment
 
     private function setProvider($provider)
     {
-        $this->config       = PaymentConfig::get($this->providerName);
+        $this->config = PaymentConfig::get($this->providerName);
 
         switch ($provider) {
             case 'mellat':
@@ -50,16 +49,19 @@ class Payment
             case 'parsian':
                 $this->provider = new Parsian($this->config);
                 break;
+            case 'jahanpay':
+                $this->provider = new JahanPay($this->config);
+                break;
             case 'pasargad':
                 $this->provider = new Pasargad($this->config);
                 break;
 
             case 'payline':
-                $this->provider     = new Payline($this->config);
+                $this->provider = new Payline($this->config);
                 break;
 
             default:
-                throw new Exception('provider not found');
+                throw new PaymentException('provider not found');
                 break;
         }
     }
@@ -81,7 +83,7 @@ class Payment
         if (in_array(strtolower($provider), $this->providers)) {
             $this->providerName = strtolower($provider);
         } else {
-            throw new Exception('provider is not supported');
+            throw new PaymentException('درگاه مورد نظر شما پشتیبانی نمی شود', 1506);
         }
         $this->setProvider($this->providerName);
 

@@ -51,9 +51,11 @@ return [
         ],
 
         'jahanpay' => [
-            'api'         => 'xxxxxxxx',
-            'payment_url' => 'http://www.jahanpay.com/webservice?wsdl',
-            'request_url' => 'http://www.jahanpay.com/pay_invoice/',
+            'direct'              => true,
+            'api'                 => 'xxxxxxxx',
+            'webserviceUrl'       => 'http://www.jahanpay.com/webservice?wsdl',
+            'requestUrl'          => 'http://www.jahanpay.com/pay_invoice/',
+            'directWebserviceUrl' => 'http://www.jahanpay.com/directservice?wsdl',
         ],
 
         'mellat' => [

@@ -81,17 +81,17 @@ abstract class PaymentAbstract
                   ->where('id', $this->transaction->id)
                   ->update(['reference' => $this->reference, 'status' => 1, 'card_number' => $this->cardNumber]);
 
-        $this->updateTransaction();
+        $this->transactionFindById($this->transaction->id);
 
         return $data;
     }
 
-    private function updateTransaction()
+    public function transactionFindById($id)
     {
-        $this->transaction = DB::table(Config::get('payment::table'))->where('id', $this->transaction->id)->first();
+        $this->transaction = DB::table(Config::get('payment::table'))->where('id', $id)->first();
     }
 
-    public function transactionFind($authority)
+    public function transactionFindByAuthority($authority)
     {
         $this->transaction = DB::table(Config::get('payment::table'))
                                ->where('authority', $authority)
@@ -103,7 +103,7 @@ abstract class PaymentAbstract
         }
     }
 
-    public function transactionFindById($id, $authority)
+    public function transactionFindByIdAndAuthority($id, $authority)
     {
         $this->transaction = DB::table(Config::get('payment::table'))
                                ->where('id', $id)

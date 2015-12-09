@@ -8,7 +8,7 @@
 
 namespace Sedehi\Payment;
 
-use Config, Exception;
+use Config;
 
 class PaymentConfig
 {
@@ -27,13 +27,12 @@ class PaymentConfig
                 break;
             case 'payline':
 
-                if(Config::get('payment::test'))
-                {
+                if (Config::get('payment::test')) {
                     $config['api']                = Config::get('payment::test_providers.payline.api');
                     $config['request_url']        = Config::get('payment::test_providers.payline.request_url');
                     $config['second_request_url'] = Config::get('payment::test_providers.payline.second_request_url');
                     $config['verify_request_url'] = Config::get('payment::test_providers.payline.verify_request_url');
-                }else{
+                } else {
                     $config['api']                = Config::get('payment::providers.payline.api');
                     $config['request_url']        = Config::get('payment::providers.payline.request_url');
                     $config['second_request_url'] = Config::get('payment::providers.payline.second_request_url');
@@ -62,8 +61,16 @@ class PaymentConfig
                 $config['checkUrl']   = Config::get('payment::providers.pasargad.checkUrl');
 
                 break;
+            case 'jahanpay':
+                $config['direct']              = Config::get('payment::providers.jahanpay.direct');
+                $config['api']                 = Config::get('payment::providers.jahanpay.api');
+                $config['webserviceUrl']       = Config::get('payment::providers.jahanpay.webserviceUrl');
+                $config['requestUrl']          = Config::get('payment::providers.jahanpay.requestUrl');
+                $config['directWebserviceUrl'] = Config::get('payment::providers.jahanpay.directWebserviceUrl');
+
+                break;
             default:
-                throw new Exception('تنظیمات سرویس دهندی موردنظر یافت نشد');
+                throw new PaymentException('تنظیمات سرویس دهندی موردنظر یافت نشد', 1505);
         }
 
         return $config;
