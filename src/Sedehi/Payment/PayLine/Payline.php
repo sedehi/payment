@@ -73,8 +73,8 @@ class Payline extends PaymentAbstract implements PaymentInterface
         if (is_numeric($verifyResponse) && $verifyResponse == 1) {
 
             $this->transactionSucceed();
+            return $this->transaction;
 
-            return dd($this->transaction);
         } else {
 
             $this->newLog($verifyResponse, PaylineException::$errors['get'][$verifyResponse]);
@@ -87,8 +87,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->requestUrl);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,
-                    "api=$this->api&amount=$this->amount&redirect=".urlencode($this->callBackUrl));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "api=$this->api&amount=$this->amount&redirect=".urlencode($this->callBackUrl));
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($ch);
