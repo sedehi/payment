@@ -30,28 +30,31 @@ abstract class PaymentAbstract
 
     public function newLog($code, $message)
     {
-        DB::table(Config::get('payment::table').'_log')->insert(array(
+        DB::table(Config::get('payment::table').'_log')->insert([
                                                                     'transaction_id' => $this->transaction->id,
                                                                     'code'           => $code,
                                                                     'message'        => $message,
                                                                     'updated_at'     => Carbon::now(),
                                                                     'created_at'     => Carbon::now()
-                                                                ));
+                                                                ]);
     }
 
-    public function newTransaction()
+    public function newTransaction(array $customData)
     {
-        $insertId = DB::table(Config::get('payment::table'))->insertGetId(array(
-                                                                              'amount'      => $this->amount,
-                                                                              'order_id'    => $this->orderId,
-                                                                              'provider'    => $this->getCallName(),
-                                                                              'currency'    => Currency::type($this->getCallName()),
-                                                                              'status'      => 0,
-                                                                              'description' => $this->description,
-                                                                              'ip'          => Request::getClientIp(),
-                                                                              'updated_at'  => Carbon::now(),
-                                                                              'created_at'  => Carbon::now()
-                                                                          ));
+
+        $data = [
+            'amount'      => $this->amount,
+            'provider'    => $this->getCallName(),
+            'currency'    => Currency::type($this->getCallName()),
+            'status'      => 0,
+            'description' => $this->description,
+            'ip'          => Request::getClientIp(),
+            'updated_at'  => Carbon::now(),
+            'created_at'  => Carbon::now()
+        ];
+        $data = array_merge($data, $customData);
+
+        $insertId = DB::table(Config::get('payment::table'))->insertGetId($data);
 
         $this->transaction = DB::table(Config::get('payment::table'))->find($insertId);
     }

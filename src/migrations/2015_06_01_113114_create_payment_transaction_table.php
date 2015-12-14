@@ -18,7 +18,6 @@ class CreatePaymentTransactionTable extends Migration
         Schema::create(Config::get('payment::table'), function (Blueprint $table) {
 
             $table->increments('id');
-            $table->integer('order_id')->unsigned()->default(null)->index()->nullable();
             $table->string('reference', 255)->nullable()->index();
             $table->string('authority', 255)->index();
             $table->decimal('amount', 15, 0);

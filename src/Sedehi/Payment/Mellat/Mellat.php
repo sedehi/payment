@@ -21,11 +21,10 @@ class Mellat extends PaymentAbstract implements PaymentInterface
     private $terminalId;
     private $username;
     private $password;
-
-    public $amount;
-    public $description = '';
-    public $callBackUrl;
-    public $orderId     = null;
+    public  $customData  = [];
+    public  $amount;
+    public  $description = '';
+    public  $callBackUrl;
 
     public function __construct($config)
     {
@@ -38,7 +37,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
 
     public function request()
     {
-        $this->newTransaction();
+        $this->newTransaction($this->customData);
 
         $response = $this->bpPayRequest();
 

@@ -26,7 +26,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
     public $amount;
     public $description = '';
     public $callBackUrl;
-    public $orderId;
+    public  $customData  = [];
 
     public function __construct($config)
     {
@@ -38,7 +38,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
 
     public function request()
     {
-        $this->newTransaction();
+        $this->newTransaction($this->customData);
 
         $this->callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
 

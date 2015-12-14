@@ -25,7 +25,7 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers = ['jahanpay', 'mellat', 'parsian', 'payline'];
+    protected $providers = ['jahanpay', 'mellat', 'payline'];
     protected $transaction;
 
     public function __construct()
@@ -113,10 +113,9 @@ class Payment
         return $this;
     }
 
-    public function orderId($orderId)
+    public function data($data)
     {
-
-        $this->provider->orderId = $orderId;
+        $this->provider->customData = $data;
 
         return $this;
     }

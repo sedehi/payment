@@ -16,6 +16,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 {
 
     private $merchantID;
+    public  $customData  = [];
 
     public function __construct($merchantID)
     {

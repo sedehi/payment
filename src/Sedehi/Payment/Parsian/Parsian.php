@@ -20,8 +20,9 @@ class Parsian extends PaymentAbstract implements PaymentInterface
     public $amount;
     public $description = '';
     public $callBackUrl;
-    public $orderId     = null;
     public $authority;
+    public  $customData  = [];
+
 
     public function __construct($config)
     {

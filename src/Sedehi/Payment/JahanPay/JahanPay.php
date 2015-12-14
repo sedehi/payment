@@ -27,7 +27,7 @@ class JahanPay extends PaymentAbstract implements PaymentInterface
     public $amount;
     public $description = '';
     public $callBackUrl;
-    public $orderId     = null;
+    public  $customData  = [];
 
     public function __construct($config)
     {
@@ -41,7 +41,7 @@ class JahanPay extends PaymentAbstract implements PaymentInterface
 
     public function request()
     {
-        $this->newTransaction();
+        $this->newTransaction($this->customData);
 
         if ($this->direct) {
             $response = $this->jpDirectRequest();
