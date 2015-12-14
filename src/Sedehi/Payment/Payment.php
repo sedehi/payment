@@ -140,26 +140,5 @@ class Payment
         return $this->provider->reversal($this->transaction);
     }
 
-    public function clearLog($dateTime = null)
-    {
-        if (is_null($dateTime)) {
-            $dateTime = Carbon::now();
-        }
-
-        return DB::table(Config::get('payment::table').'_log')->where('created_at', '<', $dateTime)->delete();
-    }
-
-    public function clearUnsuccessful($dateTime = null)
-    {
-        if (is_null($dateTime)) {
-            $dateTime = Carbon::now();
-        }
-
-        return DB::table(Config::get('payment::table'))
-                 ->where('status', 0)
-                 ->where('created_at', '<', $dateTime)
-                 ->delete();
-    }
-
 
 }

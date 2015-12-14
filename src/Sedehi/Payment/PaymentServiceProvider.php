@@ -1,8 +1,11 @@
 <?php namespace Sedehi\Payment;
 
 use Illuminate\Support\ServiceProvider;
+use Sedehi\Payment\Commands\ClearLogCommand;
+use Sedehi\Payment\Commands\ClearUnsuccessfulTransactionsCommand;
 
-class PaymentServiceProvider extends ServiceProvider {
+class PaymentServiceProvider extends ServiceProvider
+{
 
     /**
      * Indicates if loading of the provider is deferred.
@@ -16,10 +19,10 @@ class PaymentServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot() {
+    public function boot()
+    {
 
         $this->package('sedehi/payment');
-
     }
 
     /**
@@ -27,13 +30,25 @@ class PaymentServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function register() {
+    public function register()
+    {
+
+        $this->app->bind('sedehi::command.clear.logs', function ($app) {
+            return new ClearLogCommand();
+        });
+        $this->app->bind('sedehi::command.clear.unsuccessful.transactions', function ($app) {
+            return new ClearUnsuccessfulTransactionsCommand();
+        });
+        $this->commands([
+                            'sedehi::command.clear.logs',
+                            'sedehi::command.clear.unsuccessful.transactions',
+                        ]);
+
 
         $this->app['payment'] = $this->app->share(function ($app) {
 
             return new Payment();
         });
-
     }
 
     /**
@@ -41,7 +56,8 @@ class PaymentServiceProvider extends ServiceProvider {
      *
      * @return array
      */
-    public function provides() {
+    public function provides()
+    {
 
         return array('payment');
     }
