@@ -53,6 +53,24 @@ class Mellat extends PaymentAbstract implements PaymentInterface
         throw new MellatException($response[0]);
     }
 
+    public function requestResponse()
+    {
+        $this->newTransaction($this->customData);
+
+        $response = $this->bpPayRequest();
+
+        $response = explode(',', $response->return);
+        if ($response[0] == '0') {
+            $this->authority = $response[1];
+            $this->transactionSetAuthority();
+
+            return $this->transaction;
+        }
+        $this->newLog($response[0], MellatException::$errors[$response[0]]);
+
+        throw new MellatException($response[0]);
+    }
+
     public function verify()
     {
         $this->getTransaction();
