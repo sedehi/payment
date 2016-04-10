@@ -56,7 +56,7 @@ abstract class PaymentAbstract
 
         $insertId = DB::table(Config::get('payment::table'))->insertGetId($data);
 
-        $this->transaction = DB::table(Config::get('payment::table'))->find($insertId);
+        $this->transactionFindById($insertId);
     }
 
     public function buildQuery($url, array $query)
@@ -73,9 +73,10 @@ abstract class PaymentAbstract
 
     public function transactionSetAuthority()
     {
-        return DB::table(Config::get('payment::table'))
+        DB::table(Config::get('payment::table'))
                  ->where('id', $this->transaction->id)
                  ->update(['authority' => $this->authority]);
+        $this->transactionFindById($this->transaction->id);
     }
 
     public function transactionSucceed()
