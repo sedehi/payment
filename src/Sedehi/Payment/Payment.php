@@ -30,6 +30,7 @@ class Payment
 
     public function __construct()
     {
+
         if (!extension_loaded('soap')) {
             throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
         }
@@ -40,6 +41,7 @@ class Payment
 
     private function setProvider($provider)
     {
+
         $this->config = PaymentConfig::get($this->providerName);
 
         switch ($provider) {
@@ -127,6 +129,15 @@ class Payment
         }
 
         return $this->provider->request();
+    }
+
+    public function requestResponse()
+    {
+        if (!$this->provider->callBackUrl) {
+            $this->provider->callBackUrl = Config::get('payment::callback_url');
+        }
+
+        return $this->provider->requestResponse();
     }
 
     public function verify()
