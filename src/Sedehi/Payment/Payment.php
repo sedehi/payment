@@ -18,6 +18,7 @@ use Sedehi\Payment\Pasargad\Pasargad;
 use Sedehi\Payment\Mellat\Mellat;
 use Sedehi\Payment\Payline\Payline;
 use Sedehi\Payment\JahanPay\JahanPay;
+use Sedehi\Payment\ZarinPal\ZarinPal;
 
 class Payment
 {
@@ -25,12 +26,11 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers = ['jahanpay', 'mellat', 'payline'];
+    protected $providers = ['jahanpay', 'mellat', 'payline', 'zarinpal'];
     protected $transaction;
 
     public function __construct()
     {
-
         if (!extension_loaded('soap')) {
             throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
         }
@@ -41,7 +41,6 @@ class Payment
 
     private function setProvider($provider)
     {
-
         $this->config = PaymentConfig::get($this->providerName);
 
         switch ($provider) {
@@ -57,9 +56,11 @@ class Payment
             case 'pasargad':
                 $this->provider = new Pasargad($this->config);
                 break;
-
             case 'payline':
                 $this->provider = new Payline($this->config);
+                break;
+            case 'zarinpal':
+                $this->provider = new ZarinPal($this->config);
                 break;
 
             default:
@@ -94,7 +95,6 @@ class Payment
 
     public function callBackUrl($callBackUrl)
     {
-
         $this->provider->callBackUrl = $callBackUrl;
 
         return $this;
@@ -102,7 +102,6 @@ class Payment
 
     public function description($description)
     {
-
         $this->provider->description = $description;
 
         return $this;
@@ -142,7 +141,6 @@ class Payment
 
     public function verify()
     {
-
         return $this->provider->verify($this->transaction);
     }
 

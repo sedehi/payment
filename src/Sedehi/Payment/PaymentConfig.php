@@ -43,7 +43,7 @@ class PaymentConfig
             case 'zarinpal':
                 $config['server']      = Config::get('payment::providers.zarinpal.server');
                 $config['payment_url'] = Config::get('payment::providers.zarinpal.payment_url');
-                $config['MerchantID']  = Config::get('payment::providers.zarinpal.MerchantID');
+                $config['merchantId']  = Config::get('payment::providers.zarinpal.merchantId');
                 $config['request_url'] = Config::get('payment::providers.zarinpal.servers.'.$config["server"].'.request_url');
 
                 break;

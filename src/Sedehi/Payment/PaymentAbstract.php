@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Config;
 use DB;
 use Request;
+use Schema;
 
 abstract class PaymentAbstract
 {
@@ -39,9 +40,11 @@ abstract class PaymentAbstract
                                                                 ]);
     }
 
+    /**
+     * @param array $customData
+     */
     public function newTransaction(array $customData)
     {
-
         $data = [
             'amount'      => $this->amount,
             'provider'    => $this->getCallName(),
@@ -52,7 +55,14 @@ abstract class PaymentAbstract
             'updated_at'  => Carbon::now(),
             'created_at'  => Carbon::now()
         ];
-        $data = array_merge($data, $customData);
+
+        foreach ($customData as $key => $value)
+        {
+            if(Schema::hasColumn(Config::get('payment::table'),$key))
+            {
+                $data = array_add($data, $key, $value);
+            }
+        }
 
         $insertId = DB::table(Config::get('payment::table'))->insertGetId($data);
 

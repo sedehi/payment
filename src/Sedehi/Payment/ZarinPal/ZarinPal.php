@@ -8,56 +8,135 @@
 
 namespace Sedehi\Payment\ZarinPal;
 
+use Input;
+use Redirect;
 use Sedehi\Payment\PaymentAbstract;
+use Sedehi\Payment\PaymentException;
 use Sedehi\Payment\PaymentInterface;
 use SoapClient;
+use SoapFault;
 
 class ZarinPal extends PaymentAbstract implements PaymentInterface
 {
 
-    private $merchantID;
-    public  $customData  = [];
+    private $merchantId;
+    private $request_url;
+    private $payment_url;
 
-    public function __construct($merchantID)
+    public $amount;
+    public $description = '';
+    public $callBackUrl;
+    public $customData  = [];
+
+    public function __construct($config)
     {
-
-        $this->merchantID = $merchantID;
+        $this->merchantId   = $config['merchantId'];
+        $this->request_url  = $config['request_url'];
+        $this->payment_url  = $config['payment_url'];
     }
 
-    public function request($amount, $url, $callbackURL, $description)
+    public function request()
     {
+        $this->newTransaction($this->customData);
 
-        $client = new SoapClient($url, array('encoding' => 'UTF-8'));
+        $this->callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
 
-        $result = $client->PaymentRequest(array(
-                                              'MerchantID'  => $this->merchantID,
-                                              'Amount'      => $amount,
-                                              'CallbackURL' => $callbackURL,
-                                              'Description' => $description,
-                                              'Mobile'      => '',
-                                              'Email'       => ''
-                                          ));
+        $response = $this->paymentRequest();
+
+        if($response->Status == 100 && strlen($response->Authority) == 36)
+        {
+            $this->authority = $response->Authority;
+            $this->transactionSetAuthority();
+            $go = $this->payment_url . $this->authority;
+            return Redirect::to($go);
+
+        } else {
+
+            $this->newLog($response->Status, ZarinPalException::$errors[$response->Status]);
+            throw new ZarinPalException($response->Status);
+        }
+
+    }
+
+    public function verify()
+    {
+        $this->getTransaction();
+
+        if(Input::get('Status') == 'OK')
+        {
+            $response = $this->paymentVerification();
+
+            if($response->Status == 100)
+            {
+                $this->reference = $response->RefID;
+                $this->transactionSucceed();
+                return $this->transaction;
+
+            } else {
+
+                $this->newLog($response->Status, ZarinPalException::$errors[$response->Status]);
+                throw new ZarinPalException($response->Status);
+            }
+
+        } else {
+
+            $this->newLog(1508, 'تراکنش توسط کاربر لغو شده است');
+            throw new PaymentException('تراکنش توسط کاربر لغو شده است', 1508);
+        }
+    }
+
+    private function paymentRequest()
+    {
+        $client = new SoapClient($this->request_url, array('encoding' => 'UTF-8'));
+
+        $data = array(
+            'MerchantID'  => $this->merchantId,
+            'Amount'      => $this->amount,
+            'CallbackURL' => $this->callBackUrl,
+            'Description' => $this->description
+        );
+
+        if (!empty($this->customData)) {
+            $data = array_merge($data, $this->customData);
+        }
+
+        $result = $client->PaymentRequest($data);
 
         return $result;
     }
 
-    public function verify($url, $Authority, $Amount)
+    public function paymentVerification()
     {
-
-
-        $client = new SoapClient($url, array('encoding' => 'UTF-8'));
+        $client = new SoapClient($this->request_url, array('encoding' => 'UTF-8'));
 
         $result = $client->PaymentVerification(array(
-                                                   'MerchantID' => $this->merchantID,
-                                                   'Authority'  => $Authority,
-                                                   'Amount'     => $Amount
-                                               ));
+            'MerchantID' => $this->merchantId,
+            'Authority'  => $this->authority,
+            'Amount'     => $this->amount
+        ));
 
         return $result;
+    }
+
+    private function getTransaction()
+    {
+        $this->authority  = Input::get('Authority');
+        $this->cardNumber = null;
+
+        if (Input::has('transaction_id'))
+        {
+            $this->transactionFindByIdAndAuthority(Input::get('transaction_id'), $this->authority);
+
+        } else {
+
+            $this->transactionFindByAuthority($this->authority);
+        }
+
+        $this->amount = $this->transaction->amount;
     }
 
     public function reversal()
     {
-        // TODO: Implement reversal() method.
+        throw new PaymentException('این تابع توسط زرین پال پشتیبانی نمی شود', 1507);
     }
 }

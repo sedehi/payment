@@ -13,7 +13,7 @@ use Sedehi\Payment\PaymentException;
 class ZarinPalException extends PaymentException
 {
 
-    protected $errors = array(
+    public static $errors = array(
         -1  => 'اطلاعات ارسال شده ناقص است.',
         -2  => 'IP و یا مرچنت کد پذیرنده صحیح نیست',
         -3  => 'رقم باید بالای 100 تومان باشد',
@@ -29,7 +29,7 @@ class ZarinPalException extends PaymentException
 
     public function __construct($errorId)
     {
-        parent::__construct(@$this->errors[$errorId], $errorId);
+        parent::__construct(@self::$errors[$errorId], $errorId);
     }
 
 }

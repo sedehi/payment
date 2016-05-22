@@ -26,7 +26,7 @@ class Payline extends PaymentAbstract implements PaymentInterface
     public $amount;
     public $description = '';
     public $callBackUrl;
-    public  $customData  = [];
+    public $customData  = [];
 
     public function __construct($config)
     {

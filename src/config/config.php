@@ -36,7 +36,7 @@ return [
         ],
 
         'zarinpal' => [
-            'MerchantID'  => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+            'merchantId'  => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
             'payment_url' => 'https://www.zarinpal.com/pg/StartPay/',
             'server'      => 'iran',
             'servers'     => [
