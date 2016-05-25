@@ -9,7 +9,6 @@
 namespace Sedehi\Payment;
 
 use Exception;
-use Sedehi\Payment\Mellat\MellatException;
 
 class PaymentException extends Exception
 {

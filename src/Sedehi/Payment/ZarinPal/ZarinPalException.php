@@ -13,7 +13,7 @@ use Sedehi\Payment\PaymentException;
 class ZarinPalException extends PaymentException
 {
 
-    public static $errors = array(
+    public static $errors = [
         -1  => 'اطلاعات ارسال شده ناقص است.',
         -2  => 'IP و یا مرچنت کد پذیرنده صحیح نیست',
         -3  => 'رقم باید بالای 100 تومان باشد',
@@ -25,7 +25,7 @@ class ZarinPalException extends PaymentException
         -54 => 'درخواست مورد نظر آرشیو شده',
         100 => 'عملیات با موفقیت انجام شد',
         101 => 'عملیات پرداخت با موفقیت انجام شده ولی قبلا عملیات PaymentVertification بر روی این تراکنش انجام شده است',
-    );
+    ];
 
     public function __construct($errorId)
     {

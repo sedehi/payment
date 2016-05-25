@@ -15,7 +15,7 @@ class CreatePaymentTransactionTable extends Migration
     public function up()
     {
 
-        Schema::create(Config::get('payment::table'), function (Blueprint $table) {
+        Schema::create(config('payment.table'), function (Blueprint $table) {
 
             $table->increments('id');
             $table->string('reference', 255)->nullable()->index();
@@ -48,7 +48,7 @@ class CreatePaymentTransactionTable extends Migration
     public function down()
     {
 
-        Schema::drop(Config::get('payment::table'));
+        Schema::drop(config('payment.table'));
     }
 
 }

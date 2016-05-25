@@ -8,11 +8,8 @@
 
 namespace Sedehi\Payment;
 
-use Config;
-
 class Currency
 {
-
     private static $providerCurrency = array(
         'payline'  => 'rial',
         'zarinpal' => 'toman',
@@ -23,7 +20,7 @@ class Currency
     public static function convert($amount, $provider)
     {
 
-        $configCurrency = Config::get('payment::currency');
+        $configCurrency = config('payment.currency');
 
         if ($configCurrency == self::$providerCurrency[$provider]) {
             return $amount;

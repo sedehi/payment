@@ -9,10 +9,9 @@
 namespace Sedehi\Payment;
 
 use Carbon\Carbon;
-use Config;
 use DB;
 use Exception;
-use Input;
+use Sedehi\Payment\PaymentConfig;
 use Sedehi\Payment\Parsian\Parsian;
 use Sedehi\Payment\Pasargad\Pasargad;
 use Sedehi\Payment\Mellat\Mellat;
@@ -22,7 +21,6 @@ use Sedehi\Payment\ZarinPal\ZarinPal;
 
 class Payment
 {
-
     protected $provider;
     protected $providerName;
     protected $config;
@@ -34,14 +32,14 @@ class Payment
         if (!extension_loaded('soap')) {
             throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
         }
-        $this->providerName = Config::get('payment::default_provider');
-        $this->config       = PaymentConfig::get($this->providerName);
+        $this->providerName = config('payment.default_provider');
+        $this->config       = Paymentconfig::get($this->providerName);
     }
 
 
     private function setProvider($provider)
     {
-        $this->config = PaymentConfig::get($this->providerName);
+        $this->config = Paymentconfig::get($this->providerName);
 
         switch ($provider) {
             case 'mellat':
@@ -124,7 +122,7 @@ class Payment
     public function request()
     {
         if (!$this->provider->callBackUrl) {
-            $this->provider->callBackUrl = Config::get('payment::callback_url');
+            $this->provider->callBackUrl = config('payment.callback_url');
         }
 
         return $this->provider->request();
@@ -133,7 +131,7 @@ class Payment
     public function requestResponse()
     {
         if (!$this->provider->callBackUrl) {
-            $this->provider->callBackUrl = Config::get('payment::callback_url');
+            $this->provider->callBackUrl = config('payment.callback_url');
         }
 
         return $this->provider->requestResponse();

@@ -13,7 +13,7 @@ class CreatePaymentLogTable extends Migration
      */
     public function up()
     {
-        Schema::create(Config::get('payment::table').'_log', function (Blueprint $table) {
+        Schema::create(config('payment.table').'_log', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('transaction_id')->unsigned()->index();
             $table->string('code');
@@ -30,7 +30,7 @@ class CreatePaymentLogTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Config::get('payment::table').'_log');
+        Schema::drop(config('payment.table').'_log');
     }
 
 }

@@ -8,17 +8,14 @@
 
 namespace Sedehi\Payment\ZarinPal;
 
-use Input;
-use Redirect;
+use Request;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentException;
 use Sedehi\Payment\PaymentInterface;
 use SoapClient;
-use SoapFault;
 
 class ZarinPal extends PaymentAbstract implements PaymentInterface
 {
-
     private $merchantId;
     private $request_url;
     private $payment_url;
@@ -48,7 +45,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
             $this->authority = $response->Authority;
             $this->transactionSetAuthority();
             $go = $this->payment_url . $this->authority;
-            return Redirect::to($go);
+            return redirect()->to($go);
 
         } else {
 
@@ -62,7 +59,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
     {
         $this->getTransaction();
 
-        if(Input::get('Status') == 'OK')
+        if(Request::get('Status') == 'OK')
         {
             $response = $this->paymentVerification();
 
@@ -120,12 +117,12 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     private function getTransaction()
     {
-        $this->authority  = Input::get('Authority');
+        $this->authority  = Request::get('Authority');
         $this->cardNumber = null;
 
-        if (Input::has('transaction_id'))
+        if (Request::has('transaction_id'))
         {
-            $this->transactionFindByIdAndAuthority(Input::get('transaction_id'), $this->authority);
+            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
 
         } else {
 

@@ -9,7 +9,6 @@
 namespace Sedehi\Payment;
 
 use Carbon\Carbon;
-use Config;
 use DB;
 use Request;
 use Schema;
@@ -31,7 +30,7 @@ abstract class PaymentAbstract
 
     public function newLog($code, $message)
     {
-        DB::table(Config::get('payment::table').'_log')->insert([
+        DB::table(config('payment.table').'_log')->insert([
                                                                     'transaction_id' => $this->transaction->id,
                                                                     'code'           => $code,
                                                                     'message'        => $message,
@@ -58,13 +57,13 @@ abstract class PaymentAbstract
 
         foreach ($customData as $key => $value)
         {
-            if(Schema::hasColumn(Config::get('payment::table'),$key))
+            if(Schema::hasColumn(config('payment.table'),$key))
             {
                 $data = array_add($data, $key, $value);
             }
         }
 
-        $insertId = DB::table(Config::get('payment::table'))->insertGetId($data);
+        $insertId = DB::table(config('payment.table'))->insertGetId($data);
 
         $this->transactionFindById($insertId);
     }
@@ -83,7 +82,7 @@ abstract class PaymentAbstract
 
     public function transactionSetAuthority()
     {
-        DB::table(Config::get('payment::table'))
+        DB::table(config('payment.table'))
                  ->where('id', $this->transaction->id)
                  ->update(['authority' => $this->authority]);
         $this->transactionFindById($this->transaction->id);
@@ -91,7 +90,7 @@ abstract class PaymentAbstract
 
     public function transactionSucceed()
     {
-        $data = DB::table(Config::get('payment::table'))
+        $data = DB::table(config('payment.table'))
                   ->where('id', $this->transaction->id)
                   ->update(['reference' => $this->reference, 'status' => 1, 'card_number' => $this->cardNumber]);
 
@@ -102,12 +101,12 @@ abstract class PaymentAbstract
 
     public function transactionFindById($id)
     {
-        $this->transaction = DB::table(Config::get('payment::table'))->where('id', $id)->first();
+        $this->transaction = DB::table(config('payment.table'))->where('id', $id)->first();
     }
 
     public function transactionFindByAuthority($authority)
     {
-        $this->transaction = DB::table(Config::get('payment::table'))
+        $this->transaction = DB::table(config('payment.table'))
                                ->where('authority', $authority)
                                ->where('status', 0)
                                ->first();
@@ -119,7 +118,7 @@ abstract class PaymentAbstract
 
     public function transactionFindByIdAndAuthority($id, $authority)
     {
-        $this->transaction = DB::table(Config::get('payment::table'))
+        $this->transaction = DB::table(config('payment.table'))
                                ->where('id', $id)
                                ->where('status', 0)
                                ->where('authority', $authority)

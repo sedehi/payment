@@ -8,65 +8,63 @@
 
 namespace Sedehi\Payment;
 
-use Config;
-
 class PaymentConfig
 {
 
     public static function get($provider)
     {
-        $config = array();
+        $config = [];
         switch ($provider) {
             case 'mellat':
 
-                $config['terminalId']    = Config::get('payment::providers.mellat.terminalId');
-                $config['username']      = Config::get('payment::providers.mellat.username');
-                $config['password']      = Config::get('payment::providers.mellat.password');
-                $config['webserviceUrl'] = Config::get('payment::providers.mellat.webserviceUrl');
+                $config['terminalId']    = config('payment.providers.mellat.terminalId');
+                $config['username']      = config('payment.providers.mellat.username');
+                $config['password']      = config('payment.providers.mellat.password');
+                $config['webserviceUrl'] = config('payment.providers.mellat.webserviceUrl');
 
                 break;
             case 'payline':
 
-                if (Config::get('payment::test')) {
-                    $config['api']                = Config::get('payment::test_providers.payline.api');
-                    $config['request_url']        = Config::get('payment::test_providers.payline.request_url');
-                    $config['second_request_url'] = Config::get('payment::test_providers.payline.second_request_url');
-                    $config['verify_request_url'] = Config::get('payment::test_providers.payline.verify_request_url');
+                if (config('payment.test')) {
+                    $config['api']                = config('payment.test_providers.payline.api');
+                    $config['request_url']        = config('payment.test_providers.payline.request_url');
+                    $config['second_request_url'] = config('payment.test_providers.payline.second_request_url');
+                    $config['verify_request_url'] = config('payment.test_providers.payline.verify_request_url');
                 } else {
-                    $config['api']                = Config::get('payment::providers.payline.api');
-                    $config['request_url']        = Config::get('payment::providers.payline.request_url');
-                    $config['second_request_url'] = Config::get('payment::providers.payline.second_request_url');
-                    $config['verify_request_url'] = Config::get('payment::providers.payline.verify_request_url');
+                    $config['api']                = config('payment.providers.payline.api');
+                    $config['request_url']        = config('payment.providers.payline.request_url');
+                    $config['second_request_url'] = config('payment.providers.payline.second_request_url');
+                    $config['verify_request_url'] = config('payment.providers.payline.verify_request_url');
                 }
 
                 break;
             case 'zarinpal':
-                $config['server']      = Config::get('payment::providers.zarinpal.server');
-                $config['payment_url'] = Config::get('payment::providers.zarinpal.payment_url');
-                $config['merchantId']  = Config::get('payment::providers.zarinpal.merchantId');
-                $config['request_url'] = Config::get('payment::providers.zarinpal.servers.'.$config["server"].'.request_url');
+                $config['server']      = config('payment.providers.zarinpal.server');
+                $config['payment_url'] = config('payment.providers.zarinpal.payment_url');
+                $config['merchantId']  = config('payment.providers.zarinpal.merchantId');
+                $config['request_url'] = config('payment.providers.zarinpal.servers.'.$config["server"].'.request_url');
 
                 break;
             case 'parsian':
-                $config['terminalId']    = Config::get('payment::providers.parsian.terminalId');
-                $config['webserviceUrl'] = Config::get('payment::providers.parsian.webserviceUrl');
-                $config['gateUrl']       = Config::get('payment::providers.parsian.gateUrl');
+                $config['terminalId']    = config('payment.providers.parsian.terminalId');
+                $config['webserviceUrl'] = config('payment.providers.parsian.webserviceUrl');
+                $config['gateUrl']       = config('payment.providers.parsian.gateUrl');
 
                 break;
             case 'pasargad':
-                $config['terminalId'] = Config::get('payment::providers.pasargad.terminalId');
-                $config['merchantId'] = Config::get('payment::providers.pasargad.merchantId');
-                $config['gateUrl']    = Config::get('payment::providers.pasargad.gateUrl');
-                $config['verifyUrl']  = Config::get('payment::providers.pasargad.verifyUrl');
-                $config['checkUrl']   = Config::get('payment::providers.pasargad.checkUrl');
+                $config['terminalId'] = config('payment.providers.pasargad.terminalId');
+                $config['merchantId'] = config('payment.providers.pasargad.merchantId');
+                $config['gateUrl']    = config('payment.providers.pasargad.gateUrl');
+                $config['verifyUrl']  = config('payment.providers.pasargad.verifyUrl');
+                $config['checkUrl']   = config('payment.providers.pasargad.checkUrl');
 
                 break;
             case 'jahanpay':
-                $config['direct']              = Config::get('payment::providers.jahanpay.direct');
-                $config['api']                 = Config::get('payment::providers.jahanpay.api');
-                $config['webserviceUrl']       = Config::get('payment::providers.jahanpay.webserviceUrl');
-                $config['requestUrl']          = Config::get('payment::providers.jahanpay.requestUrl');
-                $config['directWebserviceUrl'] = Config::get('payment::providers.jahanpay.directWebserviceUrl');
+                $config['direct']              = config('payment.providers.jahanpay.direct');
+                $config['api']                 = config('payment.providers.jahanpay.api');
+                $config['webserviceUrl']       = config('payment.providers.jahanpay.webserviceUrl');
+                $config['requestUrl']          = config('payment.providers.jahanpay.requestUrl');
+                $config['directWebserviceUrl'] = config('payment.providers.jahanpay.directWebserviceUrl');
 
                 break;
             default:
