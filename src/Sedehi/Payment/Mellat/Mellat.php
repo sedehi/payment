@@ -12,7 +12,7 @@ use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
 use SoapClient;
-use Input;
+use Request;
 use SoapFault;
 
 class Mellat extends PaymentAbstract implements PaymentInterface
@@ -75,7 +75,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
     {
         $this->getTransaction();
 
-        if (Input::get('ResCode') == '0') {
+        if (Request::get('ResCode') == '0') {
 
             $verifyResponse = $this->bpVerifyRequest();
 
@@ -94,8 +94,8 @@ class Mellat extends PaymentAbstract implements PaymentInterface
                 }
             }
         }
-        $this->newLog(Input::get('ResCode'), MellatException::$errors[Input::get('ResCode')]);
-        throw new MellatException(Input::get('ResCode'));
+        $this->newLog(Request::get('ResCode'), MellatException::$errors[Request::get('ResCode')]);
+        throw new MellatException(Request::get('ResCode'));
     }
 
     public function reversal()
@@ -237,12 +237,12 @@ class Mellat extends PaymentAbstract implements PaymentInterface
 
     private function getTransaction()
     {
-        $this->authority  = Input::get('RefId');
-        $this->reference  = Input::get('SaleReferenceId');
-        $this->cardNumber = Input::get('CardHolderPan');
+        $this->authority  = Request::get('RefId');
+        $this->reference  = Request::get('SaleReferenceId');
+        $this->cardNumber = Request::get('CardHolderPan');
 
-        if (Input::has('transaction_id')) {
-            $this->transactionFindByIdAndAuthority(Input::get('transaction_id'), $this->authority);
+        if (Request::has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
         } else {
 
             $this->transactionFindByAuthority($this->authority);
