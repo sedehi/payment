@@ -31,7 +31,7 @@ class CreatePaymentTransactionTable extends Migration
                 'toman',
                 'rial',
             ))->index();
-            $table->tinyInteger('status')->index();
+            $table->tinyInteger('status')->default(0)->index();
             $table->string('card_number', 20)->nullable()->default(null)->index();
             $table->text('description')->nullable();
             $table->string('ip', 20)->nullable()->index();
