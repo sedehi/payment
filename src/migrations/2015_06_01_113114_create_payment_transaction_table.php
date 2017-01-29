@@ -20,7 +20,7 @@ class CreatePaymentTransactionTable extends Migration
             $table->increments('id');
             $table->string('reference', 255)->nullable()->index();
             $table->string('authority', 255)->index();
-            $table->decimal('amount', 15, 0);
+            $table->integer('amount',)->unsigned()->index();
             $table->enum('provider', array(
                 'zarinpal',
                 'payline',
@@ -37,6 +37,7 @@ class CreatePaymentTransactionTable extends Migration
             $table->string('ip', 20)->nullable()->index();
             $table->timestamps();
             $table->index('created_at');
+
         });
     }
 
