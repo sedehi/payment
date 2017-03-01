@@ -21,6 +21,7 @@ use Sedehi\Payment\ZarinPal\ZarinPal;
 
 class Payment
 {
+
     protected $provider;
     protected $providerName;
     protected $config;
@@ -140,6 +141,11 @@ class Payment
     public function verify()
     {
         return $this->provider->verify($this->transaction);
+    }
+
+    public function transaction()
+    {
+        return $this->provider->transaction($this->transaction);
     }
 
     public function reversal()
