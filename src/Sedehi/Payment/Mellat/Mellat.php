@@ -98,6 +98,22 @@ class Mellat extends PaymentAbstract implements PaymentInterface
         throw new MellatException(Request::get('ResCode'));
     }
 
+    public function transaction()
+    {
+        $this->authority  = Request::get('RefId');
+        $this->reference  = Request::get('SaleReferenceId');
+        $this->cardNumber = Request::get('CardHolderPan');
+
+        if (Request::has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
+        } else {
+
+            $this->transactionFindByAuthority($this->authority);
+        }
+        
+        return $this->transaction;
+    }
+
     public function reversal()
     {
         $this->getTransaction();
