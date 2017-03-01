@@ -16,6 +16,7 @@ use SoapClient;
 
 class ZarinPal extends PaymentAbstract implements PaymentInterface
 {
+
     private $merchantId;
     private $request_url;
     private $payment_url;
@@ -27,9 +28,9 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     public function __construct($config)
     {
-        $this->merchantId   = $config['merchantId'];
-        $this->request_url  = $config['request_url'];
-        $this->payment_url  = $config['payment_url'];
+        $this->merchantId  = $config['merchantId'];
+        $this->request_url = $config['request_url'];
+        $this->payment_url = $config['payment_url'];
     }
 
     public function request()
@@ -40,46 +41,53 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
         $response = $this->paymentRequest();
 
-        if($response->Status == 100 && strlen($response->Authority) == 36)
-        {
+        if ($response->Status == 100 && strlen($response->Authority) == 36) {
             $this->authority = $response->Authority;
             $this->transactionSetAuthority();
-            $go = $this->payment_url . $this->authority;
-            return redirect()->to($go);
+            $go = $this->payment_url.$this->authority;
 
+            return redirect()->to($go);
         } else {
 
             $this->newLog($response->Status, ZarinPalException::$errors[$response->Status]);
             throw new ZarinPalException($response->Status);
         }
-
     }
 
     public function verify()
     {
         $this->getTransaction();
 
-        if(Request::get('Status') == 'OK')
-        {
+        if (Request::get('Status') == 'OK') {
             $response = $this->paymentVerification();
 
-            if($response->Status == 100)
-            {
+            if ($response->Status == 100) {
                 $this->reference = $response->RefID;
                 $this->transactionSucceed();
-                return $this->transaction;
 
+                return $this->transaction;
             } else {
 
                 $this->newLog($response->Status, ZarinPalException::$errors[$response->Status]);
                 throw new ZarinPalException($response->Status);
             }
-
         } else {
 
             $this->newLog(1508, 'تراکنش توسط کاربر لغو شده است');
             throw new PaymentException('تراکنش توسط کاربر لغو شده است', 1508);
         }
+    }
+
+    public function transaction()
+    {
+        $this->authority = Request::get('Authority');
+        if (Request::has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
+        } else {
+
+            $this->transactionFindByAuthority($this->authority);
+        }
+        return $this->transaction;
     }
 
     private function paymentRequest()
@@ -107,10 +115,10 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         $client = new SoapClient($this->request_url, array('encoding' => 'UTF-8'));
 
         $result = $client->PaymentVerification(array(
-            'MerchantID' => $this->merchantId,
-            'Authority'  => $this->authority,
-            'Amount'     => $this->amount
-        ));
+                                                   'MerchantID' => $this->merchantId,
+                                                   'Authority'  => $this->authority,
+                                                   'Amount'     => $this->amount
+                                               ));
 
         return $result;
     }
@@ -120,10 +128,8 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         $this->authority  = Request::get('Authority');
         $this->cardNumber = null;
 
-        if (Request::has('transaction_id'))
-        {
+        if (Request::has('transaction_id')) {
             $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
-
         } else {
 
             $this->transactionFindByAuthority($this->authority);
