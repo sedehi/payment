@@ -12,7 +12,7 @@ return [
     'callback_url' => 'http://develop.dev:8080/return',
 
     'providers' => [
-        
+
         'parsian' => [
             'terminalId'    => 'xxxxxx',
             'webserviceUrl' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx',

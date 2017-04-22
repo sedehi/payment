@@ -20,6 +20,8 @@ class PaymentServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([__DIR__.'/../../config/payment.php' => config_path('payment.php')]);
+        $this->publishes([__DIR__.'/../../migrations/' => database_path('migrations')],'migrations');
+
     }
     public function register()
     {
