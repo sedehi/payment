@@ -12,12 +12,10 @@ use Carbon\Carbon;
 use DB;
 use Exception;
 use Sedehi\Payment\PaymentConfig;
-use Sedehi\Payment\Parsian\Parsian;
-use Sedehi\Payment\Pasargad\Pasargad;
-use Sedehi\Payment\Mellat\Mellat;
-use Sedehi\Payment\Payline\Payline;
-use Sedehi\Payment\JahanPay\JahanPay;
-use Sedehi\Payment\ZarinPal\ZarinPal;
+use Sedehi\Payment\Providers\Parsian\Parsian;
+use Sedehi\Payment\Providers\Pasargad\Pasargad;
+use Sedehi\Payment\Providers\Mellat\Mellat;
+use Sedehi\Payment\Providers\ZarinPal\ZarinPal;
 
 class Payment
 {
@@ -25,54 +23,51 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers = ['jahanpay', 'mellat', 'payline', 'zarinpal'];
+    protected $providers
+        = [
+            'jahanpay',
+            'mellat',
+            'payline',
+            'zarinpal'
+        ];
     protected $transaction;
 
     public function __construct()
     {
-        if (!extension_loaded('soap')) {
+        if(!extension_loaded('soap')){
             throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
         }
         $this->providerName = config('payment.default_provider');
         $this->config       = Paymentconfig::get($this->providerName);
     }
 
-
     private function setProvider($provider)
     {
         $this->config = Paymentconfig::get($this->providerName);
-
-        switch ($provider) {
+        switch($provider){
             case 'mellat':
                 $this->provider = new Mellat($this->config);
-                break;
+            break;
             case 'parsian':
                 $this->provider = new Parsian($this->config);
-                break;
-            case 'jahanpay':
-                $this->provider = new JahanPay($this->config);
-                break;
+            break;
             case 'pasargad':
                 $this->provider = new Pasargad($this->config);
-                break;
-            case 'payline':
-                $this->provider = new Payline($this->config);
-                break;
+            break;
             case 'zarinpal':
                 $this->provider = new ZarinPal($this->config);
-                break;
-
+            break;
             default:
                 throw new PaymentException('provider not found');
-                break;
+            break;
         }
     }
 
     public function __call($method, $args)
     {
-        if (in_array(strtolower($method), $this->providers)) {
+        if(in_array(strtolower($method), $this->providers)){
             $this->providerName = strtolower($method);
-        } else {
+        }else{
             throw new Exception('provider is not supported');
         }
         $this->setProvider($this->providerName);
@@ -82,9 +77,9 @@ class Payment
 
     public function provider($provider)
     {
-        if (in_array(strtolower($provider), $this->providers)) {
+        if(in_array(strtolower($provider), $this->providers)){
             $this->providerName = strtolower($provider);
-        } else {
+        }else{
             throw new PaymentException('درگاه مورد نظر شما پشتیبانی نمی شود', 1506);
         }
         $this->setProvider($this->providerName);
@@ -122,7 +117,7 @@ class Payment
 
     public function request()
     {
-        if (!$this->provider->callBackUrl) {
+        if(!$this->provider->callBackUrl){
             $this->provider->callBackUrl = config('payment.callback_url');
         }
 
@@ -131,7 +126,7 @@ class Payment
 
     public function requestResponse()
     {
-        if (!$this->provider->callBackUrl) {
+        if(!$this->provider->callBackUrl){
             $this->provider->callBackUrl = config('payment.callback_url');
         }
 
@@ -152,6 +147,5 @@ class Payment
     {
         return $this->provider->reversal($this->transaction);
     }
-
 
 }
