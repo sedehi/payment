@@ -11,9 +11,7 @@ namespace Sedehi\Payment;
 class Currency
 {
     private static $providerCurrency = array(
-        'payline'  => 'rial',
         'zarinpal' => 'toman',
-        'jahanpay' => 'toman',
         'mellat'   => 'rial'
     );
 
