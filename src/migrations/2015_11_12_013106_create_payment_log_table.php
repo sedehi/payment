@@ -16,7 +16,7 @@ class CreatePaymentLogTable extends Migration
         Schema::create(config('payment.table').'_log', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('transaction_id')->unsigned()->index();
-            $table->string('code');
+            $table->string('code')->index();
             $table->string('message');
             $table->timestamps();
             $table->index('created_at');
