@@ -25,9 +25,7 @@ class Payment
     protected $config;
     protected $providers
         = [
-            'jahanpay',
             'mellat',
-            'payline',
             'zarinpal'
         ];
     protected $transaction;
