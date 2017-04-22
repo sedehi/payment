@@ -4,7 +4,6 @@
   "keywords": [
     "laravel",
     "payment"
-
   ],
   "license": "MIT",
   "authors": [
@@ -12,12 +11,10 @@
       "name": "Navid Sedehi",
       "email": "navid.sedehi@gmail.com",
       "homepage": "http://sedehi.ir"
-
     },
     {
       "name": "Majid Ghaemifar",
       "email": "mgh145@gmail.com"
-
     }
   ],
   "require": {
@@ -28,7 +25,7 @@
     "classmap": [
       "src/migrations"
     ],
-    "psr-0": {
+    "psr-4": {
       "Sedehi\\Payment\\": "src/"
     }
   },

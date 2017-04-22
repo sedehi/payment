@@ -1,5 +1,5 @@
 <?php
-namespace Sedehi\Payment\Parsian;
+namespace Sedehi\Payment\Providers\Parsian;
 
 use Sedehi\Payment\PaymentException;
 

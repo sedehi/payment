@@ -9,7 +9,7 @@
  */
 
 
-namespace Sedehi\Payment\Pasargad;
+namespace Sedehi\Payment\Providers\Pasargad;
 
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;

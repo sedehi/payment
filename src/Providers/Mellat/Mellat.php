@@ -6,7 +6,7 @@
  * Time: 7:25 PM
  */
 
-namespace Sedehi\Payment\Mellat;
+namespace Sedehi\Payment\Providers\Mellat;
 
 use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;

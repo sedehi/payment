@@ -6,7 +6,7 @@
  * Time: 11:14 PM
  */
 
-namespace Sedehi\Payment\ZarinPal;
+namespace Sedehi\Payment\Providers\ZarinPal;
 
 use Sedehi\Payment\PaymentException;
 

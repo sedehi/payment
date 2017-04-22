@@ -6,7 +6,7 @@
  * Time: 8:59 PM
  */
 
-namespace Sedehi\Payment\Mellat;
+namespace Sedehi\Payment\Providers\Mellat;
 
 
 class MellatRedirect {

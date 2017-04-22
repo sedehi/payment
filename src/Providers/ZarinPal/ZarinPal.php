@@ -6,7 +6,7 @@
  * Time: 7:25 PM
  */
 
-namespace Sedehi\Payment\ZarinPal;
+namespace Sedehi\Payment\Providers\ZarinPal;
 
 use Request;
 use Sedehi\Payment\PaymentAbstract;

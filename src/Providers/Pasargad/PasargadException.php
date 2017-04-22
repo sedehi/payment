@@ -6,7 +6,7 @@
  * Time: 11:14 PM
  */
 
-namespace Sedehi\Payment\Pasargad;
+namespace Sedehi\Payment\Providers\Pasargad;
 
 use Sedehi\Payment\PaymentException;
 

@@ -6,7 +6,7 @@
  * Time: 11:14 PM
  */
 
-namespace Sedehi\Payment\Mellat;
+namespace Sedehi\Payment\Providers\Mellat;
 
 use Sedehi\Payment\PaymentException;
 

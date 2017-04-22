@@ -6,7 +6,7 @@
  * Time: 10:35 PM
  */
 
-namespace Sedehi\Payment\Parsian;
+namespace Sedehi\Payment\Providers\Parsian;
 
 
 use Sedehi\Payment\PaymentAbstract;
