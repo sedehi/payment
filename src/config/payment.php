@@ -57,16 +57,7 @@ return [
         'zarinpal' => [
             'merchantId'  => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
             'payment_url' => 'https://sandbox.zarinpal.com/pg/StartPay/',
-            'server'      => 'iran',
-            'servers'     => [
-                'germany' => [
-                    'request_url' => 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl'
-                ],
-                'iran'    => [
-                    'request_url' => 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl'
-                ]
-            ],
-
+            'request_url' => 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl',
         ],
     ]
 ];
