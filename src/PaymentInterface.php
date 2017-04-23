@@ -8,7 +8,6 @@
 
 namespace Sedehi\Payment;
 
-
 interface PaymentInterface
 {
 
@@ -17,7 +16,5 @@ interface PaymentInterface
     public function verify();
 
     public function reversal();
-
-
 
 }

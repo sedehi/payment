@@ -1,35 +1,28 @@
 <?php
-
 return [
-    'table' => 'payment_transaction',
-
+    'table'            => 'payment_transaction',
     'default_provider' => 'mellat',
-
-    'test' => true,
-
-    'currency' => 'rial',
-
-    'callback_url' => 'http://develop.dev:8080/return',
-
-    'providers' => [
-
-        'parsian' => [
-            'terminalId'    => 'xxxxxx',
-            'webserviceUrl' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx',
-            'gateUrl'       => 'https://pec.shaparak.ir/pecpaymentgateway/default.aspx?au='
+    'test'             => true,
+    'currency'         => 'rial',
+    'callback_url'     => 'http://develop.dev/return',
+    'providers'        => [
+        'parsian'  => [
+            'currency'       => 'rial',
+            'terminal_id'    => 'xxxxxx',
+            'webservice_url' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx',
+            'gate_url'       => 'https://pec.shaparak.ir/pecpaymentgateway/default.aspx?au=',
         ],
-
         'pasargad' => [
-            'terminalId' => 'xxxxx',
-            'merchantId' => 'xxxxx',
-            'gateUrl'    => 'https://pep.shaparak.ir/gateway.aspx',
-            'verifyUrl'  => 'https://pep.shaparak.ir/VerifyPayment.aspx',
-            'checkUrl'   => 'https://pep.shaparak.ir/CheckTransactionResult.aspx'
-
+            'currency'    => 'rial',
+            'terminal_id' => 'xxxxx',
+            'merchant_id' => 'xxxxx',
+            'gate_url'    => 'https://pep.shaparak.ir/gateway.aspx',
+            'verify_url'  => 'https://pep.shaparak.ir/VerifyPayment.aspx',
+            'check_url'   => 'https://pep.shaparak.ir/CheckTransactionResult.aspx',
         ],
-
         'zarinpal' => [
-            'merchantId'  => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+            'currency'    => 'toman',
+            'merchant_id' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
             'payment_url' => 'https://www.zarinpal.com/pg/StartPay/',
             'server'      => 'iran',
             'servers'     => [
@@ -37,27 +30,23 @@ return [
                     'request_url' => 'https://de.zarinpal.com/pg/services/WebGate/wsdl',
                 ],
                 'iran'    => [
-                    'request_url' => 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
-                ]
+                    'request_url' => 'https://ir.zarinpal.com/pg/services/WebGate/wsdl',
+                ],
             ],
-
         ],
-
-        'mellat' => [
-            'terminalId'    => 'xxxxxxx',
-            'username'      => 'xxxxxxx',
-            'password'      => 'xxxxxxx',
-            'webserviceUrl' => 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl',
+        'mellat'   => [
+            'currency'       => 'rial',
+            'terminal_id'    => 'xxxxxxx',
+            'username'       => 'xxxxxxx',
+            'password'       => 'xxxxxxx',
+            'webservice_url' => 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl',
         ],
-
     ],
-
-
-    'test_providers' => [
+    'test_providers'   => [
         'zarinpal' => [
-            'merchantId'  => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+            'merchant_id' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
             'payment_url' => 'https://sandbox.zarinpal.com/pg/StartPay/',
             'request_url' => 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl',
         ],
-    ]
+    ],
 ];

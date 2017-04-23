@@ -1,13 +1,10 @@
 <?php
-
-
 /**
  * Created by PhpStorm.
  * User: Navid
  * Date: 12/7/2015
  * Time: 11:23 PM
  */
-
 
 namespace Sedehi\Payment\Providers\Pasargad;
 

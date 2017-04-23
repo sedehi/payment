@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -8,12 +7,11 @@ class CreatePaymentLogTable extends Migration
 
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
     {
-        Schema::create(config('payment.table').'_log', function (Blueprint $table) {
+        Schema::create(config('payment.table').'_log', function(Blueprint $table){
             $table->increments('id');
             $table->integer('transaction_id')->unsigned()->index();
             $table->string('code')->index();
@@ -25,7 +23,6 @@ class CreatePaymentLogTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down()

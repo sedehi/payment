@@ -23,11 +23,10 @@ class Payment
     protected $provider;
     protected $providerName;
     protected $config;
-    protected $providers
-        = [
-            'mellat',
-            'zarinpal'
-        ];
+    protected $providers = [
+        'mellat',
+        'zarinpal',
+    ];
     protected $transaction;
 
     public function __construct()

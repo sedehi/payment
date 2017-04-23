@@ -8,7 +8,6 @@
 
 namespace Sedehi\Payment\Providers\Parsian;
 
-
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
 
@@ -21,8 +20,7 @@ class Parsian extends PaymentAbstract implements PaymentInterface
     public $description = '';
     public $callBackUrl;
     public $authority;
-    public  $customData  = [];
-
+    public $customData  = [];
 
     public function __construct($config)
     {

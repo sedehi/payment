@@ -13,9 +13,7 @@ use Sedehi\Payment\PaymentException;
 class PasargadException extends PaymentException
 {
 
-    public static $errors = [
-
-    ];
+    public static $errors = [];
 
     public function __construct($errorId)
     {

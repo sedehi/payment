@@ -1,4 +1,5 @@
 <?php
+
 namespace Sedehi\Payment\Providers\Parsian;
 
 use Sedehi\Payment\PaymentException;
@@ -27,7 +28,7 @@ class ParsianException extends PaymentException
         21 => 'invalid authority',
         22 => 'اطلاعات پذیرنده صحیح نیست.',
         30 => 'عملیات قبلا با موفقیت انجام شده است.',
-        34 => 'شماره تراکنش فروشنده درست نمی باشد.'
+        34 => 'شماره تراکنش فروشنده درست نمی باشد.',
     ];
 
     public function __construct($errorId)

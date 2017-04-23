@@ -8,12 +8,11 @@
 
 namespace Sedehi\Payment\Providers\Mellat;
 
+class MellatRedirect
+{
 
-class MellatRedirect {
-
-
-    public static function to($authority) {
-
+    public static function to($authority)
+    {
         return '<html>
     <body>
         <script>

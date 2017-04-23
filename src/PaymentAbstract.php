@@ -31,12 +31,12 @@ abstract class PaymentAbstract
     public function newLog($code, $message)
     {
         DB::table(config('payment.table').'_log')->insert([
-                                                                    'transaction_id' => $this->transaction->id,
-                                                                    'code'           => $code,
-                                                                    'message'        => $message,
-                                                                    'updated_at'     => Carbon::now(),
-                                                                    'created_at'     => Carbon::now()
-                                                                ]);
+                                                              'transaction_id' => $this->transaction->id,
+                                                              'code'           => $code,
+                                                              'message'        => $message,
+                                                              'updated_at'     => Carbon::now(),
+                                                              'created_at'     => Carbon::now(),
+                                                          ]);
     }
 
     /**
@@ -52,19 +52,14 @@ abstract class PaymentAbstract
             'description' => $this->description,
             'ip'          => Request::getClientIp(),
             'updated_at'  => Carbon::now(),
-            'created_at'  => Carbon::now()
+            'created_at'  => Carbon::now(),
         ];
-
-        foreach ($customData as $key => $value)
-        {
-            if(Schema::hasColumn(config('payment.table'),$key))
-            {
+        foreach($customData as $key => $value){
+            if(Schema::hasColumn(config('payment.table'), $key)){
                 $data = array_add($data, $key, $value);
             }
         }
-
         $insertId = DB::table(config('payment.table'))->insertGetId($data);
-
         $this->transactionFindById($insertId);
     }
 
@@ -72,28 +67,27 @@ abstract class PaymentAbstract
     {
         $query        = http_build_query($query);
         $questionMark = strpos($url, '?');
-        if (!$questionMark) {
+        if(!$questionMark){
             return "$url?$query";
-        } else {
+        }else{
             return substr($url, 0, $questionMark + 1).$query."&".substr($url, $questionMark + 1);
         }
     }
 
-
     public function transactionSetAuthority()
     {
-        DB::table(config('payment.table'))
-                 ->where('id', $this->transaction->id)
-                 ->update(['authority' => $this->authority]);
+        DB::table(config('payment.table'))->where('id', $this->transaction->id)
+          ->update(['authority' => $this->authority]);
         $this->transactionFindById($this->transaction->id);
     }
 
     public function transactionSucceed()
     {
-        $data = DB::table(config('payment.table'))
-                  ->where('id', $this->transaction->id)
-                  ->update(['reference' => $this->reference, 'status' => 1, 'card_number' => $this->cardNumber]);
-
+        $data = DB::table(config('payment.table'))->where('id', $this->transaction->id)
+                  ->update(['reference'   => $this->reference,
+                            'status'      => 1,
+                            'card_number' => $this->cardNumber,
+                           ]);
         $this->transactionFindById($this->transaction->id);
 
         return $data;
@@ -106,25 +100,18 @@ abstract class PaymentAbstract
 
     public function transactionFindByAuthority($authority)
     {
-        $this->transaction = DB::table(config('payment.table'))
-                               ->where('authority', $authority)
-                               ->where('status', 0)
+        $this->transaction = DB::table(config('payment.table'))->where('authority', $authority)->where('status', 0)
                                ->first();
-
-        if (is_null($this->transaction)) {
+        if(is_null($this->transaction)){
             throw new PaymentException('تراکنش یافت نشد', 1500);
         }
     }
 
     public function transactionFindByIdAndAuthority($id, $authority)
     {
-        $this->transaction = DB::table(config('payment.table'))
-                               ->where('id', $id)
-                               ->where('status', 0)
-                               ->where('authority', $authority)
-                               ->first();
-
-        if (is_null($this->transaction)) {
+        $this->transaction = DB::table(config('payment.table'))->where('id', $id)->where('status', 0)
+                               ->where('authority', $authority)->first();
+        if(is_null($this->transaction)){
             throw new PaymentException('تراکنش یافت نشد', 1500);
         }
     }

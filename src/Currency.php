@@ -10,31 +10,24 @@ namespace Sedehi\Payment;
 
 class Currency
 {
-    private static $providerCurrency = array(
-        'zarinpal' => 'toman',
-        'mellat'   => 'rial'
-    );
-
     public static function convert($amount, $provider)
     {
-
         $configCurrency = config('payment.currency');
-
-        if ($configCurrency == self::$providerCurrency[$provider]) {
+        $providerCurrency = self::type($provider);
+        if($configCurrency == $providerCurrency){
             return $amount;
         }
-
-        if ($configCurrency == 'rial' && self::$providerCurrency[$provider] == 'toman') {
+        if($configCurrency == 'rial' && $providerCurrency == 'toman'){
             return $amount / 10;
-        } elseif ($configCurrency == 'toman' && self::$providerCurrency[$provider] == 'rial') {
+        }elseif($configCurrency == 'toman' && $providerCurrency == 'rial'){
             return $amount * 10;
         }
 
-        return $amount;
+        return null;
     }
 
     public static function type($provider)
     {
-        return self::$providerCurrency[$provider];
+        return config('payment.providers.'.$provider.'.currency');
     }
 }

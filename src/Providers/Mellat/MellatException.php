@@ -57,8 +57,7 @@ class MellatException extends PaymentException
         51  => 'تراکنش تکراری است',
         54  => 'تراکنش مرجع موجود نیست',
         55  => 'تراکنش نامعتبر است',
-        61  => 'خطا در واریز'
-
+        61  => 'خطا در واریز',
     ];
 
     public function __construct($errorId)
