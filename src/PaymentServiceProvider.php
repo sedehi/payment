@@ -38,7 +38,7 @@ class PaymentServiceProvider extends ServiceProvider
                             'sedehi::command.clear.logs',
                             'sedehi::command.clear.unsuccessful.transactions',
                         ]);
-        $this->app->singleton(Payment::class,function($app){
+       $this->app->singleton('payment',function($app){
             return new Payment();
         });
     }
