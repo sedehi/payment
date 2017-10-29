@@ -50,6 +50,21 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         }
     }
 
+    public function requestResponse()
+    {
+        $this->newTransaction($this->customData);
+        $this->callBackUrl = $this->buildQuery($this->callBackUrl, ['transaction_id' => $this->transaction->id]);
+        $response = $this->paymentRequest();
+        if($response->Status == 100 && strlen($response->Authority) == 36){
+            $this->authority = $response->Authority;
+            $this->transactionSetAuthority();
+            return $this->transaction;
+        }else{
+            $this->newLog($response->Status, ZarinPalException::$errors[$response->Status]);
+            throw new ZarinPalException($response->Status);
+        }
+    }
+    
     public function verify()
     {
         $this->getTransaction();
