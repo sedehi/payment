@@ -24,6 +24,7 @@ return [
             'currency'    => 'toman',
             'merchant_id' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
             'payment_url' => 'https://www.zarinpal.com/pg/StartPay/',
+            'zarin_gate' => false,
             'server'      => 'iran',
             'servers'     => [
                 'germany' => [
