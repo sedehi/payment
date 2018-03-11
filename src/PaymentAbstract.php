@@ -44,21 +44,17 @@ abstract class PaymentAbstract
      */
     public function newTransaction(array $customData)
     {
-        $data = [
-            'amount'      => $this->amount,
-            'provider'    => $this->getCallName(),
-            'currency'    => Currency::type($this->getCallName()),
-            'status'      => 0,
-            'description' => $this->description,
-            'ip'          => Request::getClientIp(),
-            'updated_at'  => Carbon::now(),
-            'created_at'  => Carbon::now(),
-        ];
-        foreach($customData as $key => $value){
-            if(Schema::hasColumn(config('payment.table'), $key)){
-                $data = array_add($data, $key, $value);
-            }
-        }
+        $data     = [
+                        'amount'      => $this->amount,
+                        'provider'    => $this->getCallName(),
+                        'currency'    => Currency::type($this->getCallName()),
+                        'status'      => 0,
+                        'description' => $this->description,
+                        'ip'          => Request::getClientIp(),
+                        'updated_at'  => Carbon::now(),
+                        'created_at'  => Carbon::now(),
+                    ] + $customData;
+        
         $insertId = DB::table(config('payment.table'))->insertGetId($data);
         $this->transactionFindById($insertId);
     }
