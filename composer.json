@@ -29,5 +29,15 @@
       "Sedehi\\Payment\\": "src/"
     }
   },
+  "extra": {
+        "laravel": {
+            "providers": [
+                "Sedehi\\Payment\\PaymentServiceProvider"
+            ],
+            "aliases": {
+                "BankPayment": "Sedehi\\Payment\\PaymentFacade"
+            }
+        }
+  },
   "minimum-stability": "stable"
 }
