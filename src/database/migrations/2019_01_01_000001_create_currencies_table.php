@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGatewaysTable extends Migration
+class CreateCurrenciesTable extends Migration
 {
 
     /**
