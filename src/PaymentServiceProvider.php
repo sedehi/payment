@@ -19,13 +19,13 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function boot(){
 
-        $this->publishes([__DIR__.'/config/payment.php' => config_path('payment.php')], 'payment-config');
+        $this->publishes([__DIR__.'/../config/payment.php' => config_path('payment.php')], 'payment-config');
         $this->publishes([__DIR__.'/database/migrations/' => database_path('migrations')], 'payment-migrations');
     }
 
     public function register(){
 
-        $this->mergeConfigFrom(__DIR__.'/config/payment.php', 'payment');
+        $this->mergeConfigFrom(__DIR__.'/../config/payment.php', 'payment-config');
         $this->app->bind('sedehi::command.clear.logs', function($app){
 
             return new ClearLogCommand();
