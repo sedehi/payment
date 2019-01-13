@@ -18,19 +18,12 @@ class CreateTransactionsTable extends Migration
             $table->string('reference', 255)->nullable()->index();
             $table->string('authority', 255)->nullable()->index();
             $table->integer('amount')->unsigned()->index();
-            $table->integer('gateway_id')->unsigned()->index();
-            $table->integer('currency_id')->unsigned()->index();
-            $table->tinyInteger('status')->default(0)->index();
+            $table->string('gateway', 20)->index();
+            $table->tinyInteger('status')->default(0);
             $table->string('card_number', 20)->nullable()->index();
             $table->text('description')->nullable();
             $table->string('ip', 15)->nullable()->index();
             $table->timestamps();
-            $table->foreign('gateway_id')->references('id')->on('gateways')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('currency_id')
-                  ->references('id')
-                  ->on('currencies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
         });
     }
 
