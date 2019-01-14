@@ -1,20 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Navid Sedehi
- * Date: 6/1/2015
- * Time: 4:53 PM
- */
 
 namespace Sedehi\Payment;
 
-use Carbon\Carbon;
 use DB;
 use Exception;
-use Sedehi\Payment\PaymentConfig;
+use Sedehi\Payment\Providers\Mellat\Mellat;
 use Sedehi\Payment\Providers\Parsian\Parsian;
 use Sedehi\Payment\Providers\Pasargad\Pasargad;
-use Sedehi\Payment\Providers\Mellat\Mellat;
 use Sedehi\Payment\Providers\ZarinPal\ZarinPal;
 
 class Payment
@@ -29,42 +21,42 @@ class Payment
     ];
     protected $transaction;
 
-    public function __construct()
-    {
-        if(!extension_loaded('soap')){
+    public function __construct(){
+
+        if(!extension_loaded('soap')) {
             throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
         }
         $this->providerName = config('payment.default_provider');
         $this->config       = Paymentconfig::get($this->providerName);
     }
 
-    private function setProvider($provider)
-    {
+    private function setProvider($provider){
+
         $this->config = Paymentconfig::get($this->providerName);
-        switch($provider){
+        switch($provider) {
             case 'mellat':
                 $this->provider = new Mellat($this->config);
-            break;
+                break;
             case 'parsian':
                 $this->provider = new Parsian($this->config);
-            break;
+                break;
             case 'pasargad':
                 $this->provider = new Pasargad($this->config);
-            break;
+                break;
             case 'zarinpal':
                 $this->provider = new ZarinPal($this->config);
-            break;
+                break;
             default:
                 throw new PaymentException('provider not found');
-            break;
+                break;
         }
     }
 
-    public function __call($method, $args)
-    {
-        if(in_array(strtolower($method), $this->providers)){
+    public function __call($method, $args){
+
+        if(in_array(strtolower($method), $this->providers)) {
             $this->providerName = strtolower($method);
-        }else{
+        }else {
             throw new Exception('provider is not supported');
         }
         $this->setProvider($this->providerName);
@@ -72,11 +64,11 @@ class Payment
         return $this;
     }
 
-    public function provider($provider)
-    {
-        if(in_array(strtolower($provider), $this->providers)){
+    public function provider($provider){
+
+        if(in_array(strtolower($provider), $this->providers)) {
             $this->providerName = strtolower($provider);
-        }else{
+        }else {
             throw new PaymentException('درگاه مورد نظر شما پشتیبانی نمی شود', 1506);
         }
         $this->setProvider($this->providerName);
@@ -84,64 +76,64 @@ class Payment
         return $this;
     }
 
-    public function callBackUrl($callBackUrl)
-    {
+    public function callBackUrl($callBackUrl){
+
         $this->provider->callBackUrl = $callBackUrl;
 
         return $this;
     }
 
-    public function description($description)
-    {
+    public function description($description){
+
         $this->provider->description = $description;
 
         return $this;
     }
 
-    public function amount($amount)
-    {
+    public function amount($amount){
+
         $this->provider->amount = Currency::convert($amount, $this->providerName);
 
         return $this;
     }
 
-    public function data($data)
-    {
+    public function data($data){
+
         $this->provider->customData = $data;
 
         return $this;
     }
 
-    public function request()
-    {
-        if(!$this->provider->callBackUrl){
+    public function request(){
+
+        if(!$this->provider->callBackUrl) {
             $this->provider->callBackUrl = config('payment.callback_url');
         }
 
         return $this->provider->request();
     }
 
-    public function requestResponse()
-    {
-        if(!$this->provider->callBackUrl){
+    public function requestResponse(){
+
+        if(!$this->provider->callBackUrl) {
             $this->provider->callBackUrl = config('payment.callback_url');
         }
 
         return $this->provider->requestResponse();
     }
 
-    public function verify()
-    {
+    public function verify(){
+
         return $this->provider->verify($this->transaction);
     }
 
-    public function transaction()
-    {
+    public function transaction(){
+
         return $this->provider->transaction($this->transaction);
     }
 
-    public function reversal()
-    {
+    public function reversal(){
+
         return $this->provider->reversal($this->transaction);
     }
 
