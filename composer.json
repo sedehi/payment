@@ -1,40 +1,37 @@
 {
-	"name": "sedehi/payment",
-	"description": "",
-	"keywords": [
-		"laravel",
-		"payment"
-	],
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Navid Sedehi",
-			"email": "navid.sedehi@gmail.com",
-			"homepage": "http://sedehi.ir"
-		}
-	],
-	"require": {
-		"php": ">=5.4.0",
-		"illuminate/support": "5.*",
-		"illuminate/http": "5.*"
-	},
-	"autoload": {
-		"classmap": [
-			"src/database/migrations"
-		],
-		"psr-4": {
-			"Sedehi\\Payment\\": "src/"
-		}
-	},
-	"extra": {
-		"laravel": {
-			"providers": [
-				"Sedehi\\Payment\\PaymentServiceProvider"
-			],
-			"aliases": {
-				"PaymentGateway": "Sedehi\\Payment\\PaymentFacade"
-			}
-		}
-	},
-	"minimum-stability": "stable"
+  "name": "sedehi/payment",
+  "description": "",
+  "keywords": [
+	"laravel",
+	"payment"
+  ],
+  "license": "MIT",
+  "authors": [
+	{
+	  "name": "Navid Sedehi",
+	  "email": "navid.sedehi@gmail.com",
+	  "homepage": "http://sedehi.ir"
+	}
+  ],
+  "require": {
+	"php": ">=5.4.0",
+	"illuminate/support": "5.*",
+	"illuminate/http": "5.*"
+  },
+  "autoload": {
+	"psr-4": {
+	  "Sedehi\\Payment\\": "src/"
+	}
+  },
+  "extra": {
+	"laravel": {
+	  "providers": [
+		"Sedehi\\Payment\\PaymentServiceProvider"
+	  ],
+	  "aliases": {
+		"PaymentGateway": "Sedehi\\Payment\\PaymentFacade"
+	  }
+	}
+  },
+  "minimum-stability": "stable"
 }
