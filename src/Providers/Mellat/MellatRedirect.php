@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Navid Sedehi
- * Date: 6/28/2015
- * Time: 8:59 PM
- */
 
 namespace Sedehi\Payment\Providers\Mellat;
 

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Navid Sedehi
- * Date: 6/1/2015
- * Time: 7:25 PM
- */
 
 namespace Sedehi\Payment\Providers\ZarinPal;
 
