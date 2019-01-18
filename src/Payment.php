@@ -2,8 +2,6 @@
 
 namespace Sedehi\Payment;
 
-use DB;
-use Exception;
 use Sedehi\Payment\Providers\Mellat\Mellat;
 use Sedehi\Payment\Providers\ZarinPal\ZarinPal;
 
@@ -22,7 +20,7 @@ class Payment
     public function __construct(){
 
         if(!extension_loaded('soap')) {
-            throw new PaymentException('soap در سرور شما فعال نمی باشد', 1504);
+            throw new PaymentException(trans('payment.soap_error'), 1504);
         }
         $this->providerName = config('payment.default_provider');
         $this->config       = Paymentconfig::get($this->providerName);
@@ -39,7 +37,7 @@ class Payment
                 $this->provider = new ZarinPal($this->config);
                 break;
             default:
-                throw new PaymentException('provider not found',1506);
+                throw new PaymentException(trans('payment.gateway_not_found'), 1506);
                 break;
         }
     }
@@ -49,7 +47,7 @@ class Payment
         if(in_array(strtolower($method), $this->providers)) {
             $this->providerName = strtolower($method);
         }else {
-            throw new Exception('provider is not supported');
+            throw new PaymentException(trans('payment.gateway_not_found'), 1506);
         }
         $this->setProvider($this->providerName);
 
@@ -61,7 +59,7 @@ class Payment
         if(in_array(strtolower($provider), $this->providers)) {
             $this->providerName = strtolower($provider);
         }else {
-            throw new PaymentException('درگاه مورد نظر شما پشتیبانی نمی شود', 1506);
+            throw new PaymentException(trans('payment.gateway_not_found'), 1506);
         }
         $this->setProvider($this->providerName);
 
