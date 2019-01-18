@@ -5,8 +5,6 @@ namespace Sedehi\Payment;
 use DB;
 use Exception;
 use Sedehi\Payment\Providers\Mellat\Mellat;
-use Sedehi\Payment\Providers\Parsian\Parsian;
-use Sedehi\Payment\Providers\Pasargad\Pasargad;
 use Sedehi\Payment\Providers\ZarinPal\ZarinPal;
 
 class Payment
@@ -37,17 +35,11 @@ class Payment
             case 'mellat':
                 $this->provider = new Mellat($this->config);
                 break;
-            case 'parsian':
-                $this->provider = new Parsian($this->config);
-                break;
-            case 'pasargad':
-                $this->provider = new Pasargad($this->config);
-                break;
             case 'zarinpal':
                 $this->provider = new ZarinPal($this->config);
                 break;
             default:
-                throw new PaymentException('provider not found');
+                throw new PaymentException('provider not found',1506);
                 break;
         }
     }
