@@ -20,8 +20,10 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
     public $callBackUrl;
     public $zarin_gate  = null;
     public $customData  = [];
+    public const name = 'zarinpal';
 
     public function __construct($config){
+
         $this->merchantId  = $config['merchantId'];
         $this->request_url = $config['request_url'];
         $this->payment_url = $config['payment_url'];
