@@ -21,6 +21,7 @@ class PaymentServiceProvider extends ServiceProvider
 
         $this->publishes([__DIR__.'/../config/payment.php' => config_path('payment.php')], 'payment-config');
         $this->publishes([__DIR__.'/../database/migrations/' => database_path('migrations')], 'payment-migrations');
+        $this->publishes([__DIR__.'/../resources/fa' => resource_path('lang/sedehi/payment')], 'payment-lang');
     }
 
     public function register(){
