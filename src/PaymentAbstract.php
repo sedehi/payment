@@ -2,10 +2,8 @@
 
 namespace Sedehi\Payment;
 
-use Carbon\Carbon;
-use DB;
-use Request;
-use Schema;
+use Sedehi\Payment\Models\Log;
+use Sedehi\Payment\Models\Transaction;
 
 abstract class PaymentAbstract
 {
@@ -15,93 +13,75 @@ abstract class PaymentAbstract
     protected $authority;
     protected $cardNumber;
 
-    private function getCallName()
-    {
-        $name = explode('\\', get_called_class());
+    public function newLog($code, $message){
 
-        return strtolower(end($name));
+        $log                 = new Log();
+        $log->transaction_id = $this->transaction->id;
+        $log->code           = $code;
+        $log->message        = $message;
+        $log->save();
     }
 
-    public function newLog($code, $message)
-    {
-        DB::table(config('payment.table').'_log')->insert([
-                                                              'transaction_id' => $this->transaction->id,
-                                                              'code'           => $code,
-                                                              'message'        => $message,
-                                                              'updated_at'     => Carbon::now(),
-                                                              'created_at'     => Carbon::now(),
-                                                          ]);
+    public function newTransaction(array $customData){
+
+        $this->transaction              = new Transaction();
+        $this->transaction->amount      = $this->amount;
+        $this->transaction->gateway     = static::name;
+        $this->transaction->status      = 0;
+        $this->transaction->description = $this->description;
+        $this->transaction->ip          = request()->getClientIp();
+        foreach($customData as $field => $data) {
+            $this->transaction->$field = $data;
+        }
+        $this->transaction->save();
     }
 
-    /**
-     * @param array $customData
-     */
-    public function newTransaction(array $customData)
-    {
-        $data     = [
-                        'amount'      => $this->amount,
-                        'provider'    => $this->getCallName(),
-                        'currency'    => Currency::type($this->getCallName()),
-                        'status'      => 0,
-                        'description' => $this->description,
-                        'ip'          => Request::getClientIp(),
-                        'updated_at'  => Carbon::now(),
-                        'created_at'  => Carbon::now(),
-                    ] + $customData;
-        
-        $insertId = DB::table(config('payment.table'))->insertGetId($data);
-        $this->transactionFindById($insertId);
-    }
-
-    public function buildQuery($url, array $query)
-    {
+    public function buildQuery($url, array $query){
         $query        = http_build_query($query);
         $questionMark = strpos($url, '?');
-        if(!$questionMark){
+        if(!$questionMark) {
             return "$url?$query";
-        }else{
+        }else {
             return substr($url, 0, $questionMark + 1).$query."&".substr($url, $questionMark + 1);
         }
     }
 
-    public function transactionSetAuthority()
-    {
-        DB::table(config('payment.table'))->where('id', $this->transaction->id)
-          ->update(['authority' => $this->authority]);
-        $this->transactionFindById($this->transaction->id);
+    public function transactionSetAuthority(){
+
+        $this->transaction->authority = $this->authority;
+        $this->transaction->save();
     }
 
-    public function transactionSucceed()
-    {
-        $data = DB::table(config('payment.table'))->where('id', $this->transaction->id)
-                  ->update(['reference'   => $this->reference,
-                            'status'      => 1,
-                            'card_number' => $this->cardNumber,
-                           ]);
-        $this->transactionFindById($this->transaction->id);
+    public function transactionSucceed(){
 
-        return $data;
+        $this->transaction->reference   = $this->reference;
+        $this->transaction->status      = 1;
+        $this->transaction->card_number = $this->cardNumber;
+        $this->transaction->save();
+
+        return $this->transaction;
     }
 
-    public function transactionFindById($id)
-    {
-        $this->transaction = DB::table(config('payment.table'))->where('id', $id)->first();
-    }
+    public function transactionFindById($id){
 
-    public function transactionFindByAuthority($authority)
-    {
-        $this->transaction = DB::table(config('payment.table'))->where('authority', $authority)->where('status', 0)
-                               ->first();
-        if(is_null($this->transaction)){
+        $this->transaction = Transaction::find($id);
+        if(is_null($this->transaction)) {
             throw new PaymentException('تراکنش یافت نشد', 1500);
         }
     }
 
-    public function transactionFindByIdAndAuthority($id, $authority)
-    {
-        $this->transaction = DB::table(config('payment.table'))->where('id', $id)->where('status', 0)
-                               ->where('authority', $authority)->first();
-        if(is_null($this->transaction)){
+    public function transactionFindByAuthority($authority){
+
+        $this->transaction = Transaction::where('authority', $authority)->where('status', 0)->first();
+        if(is_null($this->transaction)) {
+            throw new PaymentException('تراکنش یافت نشد', 1500);
+        }
+    }
+
+    public function transactionFindByIdAndAuthority($id, $authority){
+
+        $this->transaction = Transaction::where('authority', $authority)->where('status', 0)->find($id);
+        if(is_null($this->transaction)) {
             throw new PaymentException('تراکنش یافت نشد', 1500);
         }
     }
