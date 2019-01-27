@@ -2,6 +2,7 @@
 
 namespace Sedehi\Payment\Providers\Mellat;
 
+use Sedehi\Payment\Currency;
 use Sedehi\Payment\Payment;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentInterface;
@@ -19,6 +20,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
     public  $amount;
     public  $description = '';
     public  $callBackUrl;
+    public const name = 'mellat';
 
     public function __construct($config){
 
@@ -116,7 +118,7 @@ class Mellat extends PaymentAbstract implements PaymentInterface
             'userName'       => $this->username,
             'userPassword'   => $this->password,
             'orderId'        => $this->transaction->id,
-            'amount'         => $this->transaction->amount,
+            'amount'         => Currency::convert($this->transaction->amount, self::name),
             'localDate'      => date('Ymd'),
             'localTime'      => date('His'),
             'additionalData' => $this->transaction->description,
