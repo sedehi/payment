@@ -1,25 +1,10 @@
 <?php
 return [
-    'table'            => 'payment_transaction',
     'default_provider' => 'mellat',
     'test'             => true,
     'currency'         => 'rial',
     'callback_url'     => 'http://develop.dev/return',
     'providers'        => [
-        'parsian'  => [
-            'currency'       => 'rial',
-            'terminal_id'    => 'xxxxxx',
-            'webservice_url' => 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx',
-            'gate_url'       => 'https://pec.shaparak.ir/pecpaymentgateway/default.aspx?au=',
-        ],
-        'pasargad' => [
-            'currency'    => 'rial',
-            'terminal_id' => 'xxxxx',
-            'merchant_id' => 'xxxxx',
-            'gate_url'    => 'https://pep.shaparak.ir/gateway.aspx',
-            'verify_url'  => 'https://pep.shaparak.ir/VerifyPayment.aspx',
-            'check_url'   => 'https://pep.shaparak.ir/CheckTransactionResult.aspx',
-        ],
         'zarinpal' => [
             'currency'    => 'toman',
             'merchant_id' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
