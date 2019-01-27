@@ -3,6 +3,7 @@
 namespace Sedehi\Payment\Providers\ZarinPal;
 
 use Request;
+use Sedehi\Payment\Currency;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentException;
 use Sedehi\Payment\PaymentInterface;
@@ -100,7 +101,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         $client = new SoapClient($this->request_url, ['encoding' => 'UTF-8']);
         $data   = [
             'MerchantID'  => $this->merchantId,
-            'Amount'      => $this->amount,
+            'Amount'      => Currency::convert($this->amount, self::name),
             'CallbackURL' => $this->callBackUrl,
             'Description' => $this->description,
         ];
@@ -118,7 +119,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         $result = $client->PaymentVerification([
                                                    'MerchantID' => $this->merchantId,
                                                    'Authority'  => $this->authority,
-                                                   'Amount'     => $this->amount,
+                                                   'Amount'     => Currency::convert($this->amount, self::name),
                                                ]);
 
         return $result;
