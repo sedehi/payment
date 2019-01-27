@@ -66,7 +66,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
     public function verify(){
 
         $this->getTransaction();
-        if(Request::get('Status') == 'OK') {
+        if(request()->get('Status') == 'OK') {
             $response = $this->paymentVerification();
             if($response->Status == 100) {
                 $this->reference = $response->RefID;
@@ -85,9 +85,9 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     public function transaction(){
 
-        $this->authority = Request::get('Authority');
-        if(Request::has('transaction_id')) {
-            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
+        $this->authority = request()->get('Authority');
+        if(request()->has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(request()->get('transaction_id'), $this->authority);
         }else {
             $this->transactionFindByAuthority($this->authority);
         }
@@ -126,10 +126,10 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     private function getTransaction(){
 
-        $this->authority  = Request::get('Authority');
+        $this->authority  = request()->get('Authority');
         $this->cardNumber = null;
-        if(Request::has('transaction_id')) {
-            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
+        if(request()->has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(request()->get('transaction_id'), $this->authority);
         }else {
             $this->transactionFindByAuthority($this->authority);
         }
