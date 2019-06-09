@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Navid Sedehi
- * Date: 6/2/2015
- * Time: 1:02 AM
- */
 
 namespace Sedehi\Payment;
 

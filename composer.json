@@ -2,42 +2,37 @@
   "name": "sedehi/payment",
   "description": "",
   "keywords": [
-    "laravel",
-    "payment"
+	"laravel",
+	"payment"
   ],
   "license": "MIT",
   "authors": [
-    {
-      "name": "Navid Sedehi",
-      "email": "navid.sedehi@gmail.com",
-      "homepage": "http://sedehi.ir"
-    },
-    {
-      "name": "Majid Ghaemifar",
-      "email": "mgh145@gmail.com"
-    }
+	{
+	  "name": "Navid Sedehi",
+	  "email": "navid.sedehi@gmail.com",
+	  "homepage": "http://sedehi.ir"
+	}
   ],
   "require": {
-    "php": ">=5.4.0",
-    "illuminate/support": "5.*"
+	"php": ">=7.0",
+	"ext-soap": "*",
+	"illuminate/support": "5.*",
+	"illuminate/http": "5.*"
   },
   "autoload": {
-    "classmap": [
-      "src/migrations"
-    ],
-    "psr-4": {
-      "Sedehi\\Payment\\": "src/"
-    }
+	"psr-4": {
+	  "Sedehi\\Payment\\": "src/"
+	}
   },
   "extra": {
-        "laravel": {
-            "providers": [
-                "Sedehi\\Payment\\PaymentServiceProvider"
-            ],
-            "aliases": {
-                "BankPayment": "Sedehi\\Payment\\PaymentFacade"
-            }
-        }
+	"laravel": {
+	  "providers": [
+		"Sedehi\\Payment\\PaymentServiceProvider"
+	  ],
+	  "aliases": {
+		"PaymentGateway": "Sedehi\\Payment\\PaymentFacade"
+	  }
+	}
   },
   "minimum-stability": "stable"
 }

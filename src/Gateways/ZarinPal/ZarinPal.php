@@ -1,14 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Navid Sedehi
- * Date: 6/1/2015
- * Time: 7:25 PM
- */
 
 namespace Sedehi\Payment\Providers\ZarinPal;
 
 use Request;
+use Sedehi\Payment\Currency;
 use Sedehi\Payment\PaymentAbstract;
 use Sedehi\Payment\PaymentException;
 use Sedehi\Payment\PaymentInterface;
@@ -26,8 +21,10 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
     public $callBackUrl;
     public $zarin_gate  = null;
     public $customData  = [];
+    public const name = 'zarinpal';
 
     public function __construct($config){
+
         $this->merchantId  = $config['merchantId'];
         $this->request_url = $config['request_url'];
         $this->payment_url = $config['payment_url'];
@@ -70,7 +67,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
     public function verify(){
 
         $this->getTransaction();
-        if(Request::get('Status') == 'OK') {
+        if(request()->get('Status') == 'OK') {
             $response = $this->paymentVerification();
             if($response->Status == 100) {
                 $this->reference = $response->RefID;
@@ -89,9 +86,9 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     public function transaction(){
 
-        $this->authority = Request::get('Authority');
-        if(Request::has('transaction_id')) {
-            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
+        $this->authority = request()->get('Authority');
+        if(request()->has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(request()->get('transaction_id'), $this->authority);
         }else {
             $this->transactionFindByAuthority($this->authority);
         }
@@ -104,7 +101,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         $client = new SoapClient($this->request_url, ['encoding' => 'UTF-8']);
         $data   = [
             'MerchantID'  => $this->merchantId,
-            'Amount'      => $this->amount,
+            'Amount'      => Currency::convert($this->amount, self::name),
             'CallbackURL' => $this->callBackUrl,
             'Description' => $this->description,
         ];
@@ -122,7 +119,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         $result = $client->PaymentVerification([
                                                    'MerchantID' => $this->merchantId,
                                                    'Authority'  => $this->authority,
-                                                   'Amount'     => $this->amount,
+                                                   'Amount'     => Currency::convert($this->amount, self::name),
                                                ]);
 
         return $result;
@@ -130,10 +127,10 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     private function getTransaction(){
 
-        $this->authority  = Request::get('Authority');
+        $this->authority  = request()->get('Authority');
         $this->cardNumber = null;
-        if(Request::has('transaction_id')) {
-            $this->transactionFindByIdAndAuthority(Request::get('transaction_id'), $this->authority);
+        if(request()->has('transaction_id')) {
+            $this->transactionFindByIdAndAuthority(request()->get('transaction_id'), $this->authority);
         }else {
             $this->transactionFindByAuthority($this->authority);
         }
