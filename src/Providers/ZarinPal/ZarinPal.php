@@ -26,6 +26,7 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
     public $callBackUrl;
     public $zarin_gate  = null;
     public $customData  = [];
+    public $fake = false;
 
     public function __construct($config){
         $this->merchantId  = $config['merchantId'];
@@ -42,8 +43,12 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
         if($response->Status == 100 && strlen($response->Authority) == 36) {
             $this->authority = $response->Authority;
             $this->transactionSetAuthority();
+            if ($this->fake) {
+                return response()->json([
+                    'url' => $this->buildQuery($this->callBackUrl, ['Status' => 'OK','Authority' => $this->authority])
+                ]);
+            }
             $go = $this->payment_url.$this->authority.$this->zarin_gate;
-
             return redirect()->to($go);
         }else {
             $this->newLog($response->Status, ZarinPalException::$errors[$response->Status]);
@@ -101,6 +106,13 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     private function paymentRequest(){
 
+        if ($this->fake) {
+            return (object) [
+                'Status' => 100,
+                'Authority' => str_random(36),
+            ];
+        }
+    
         $client = new SoapClient($this->request_url, ['encoding' => 'UTF-8']);
         $data   = [
             'MerchantID'  => $this->merchantId,
@@ -118,6 +130,13 @@ class ZarinPal extends PaymentAbstract implements PaymentInterface
 
     public function paymentVerification(){
 
+        if ($this->fake) {
+            return (object) [
+                'Status' => 100,
+                'RefID' => 1,
+            ];
+        }
+    
         $client = new SoapClient($this->request_url, ['encoding' => 'UTF-8']);
         $result = $client->PaymentVerification([
                                                    'MerchantID' => $this->merchantId,
