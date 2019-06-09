@@ -28,6 +28,7 @@ class Payment
         'zarinpal',
     ];
     protected $transaction;
+    protected static $fake = false;
 
     public function __construct()
     {
@@ -36,6 +37,13 @@ class Payment
         }
         $this->providerName = config('payment.default_provider');
         $this->config       = Paymentconfig::get($this->providerName);
+    }
+    
+    public static function fake()
+    {
+        self::$fake = true;
+
+        return new self();
     }
 
     private function setProvider($provider)
@@ -58,6 +66,7 @@ class Payment
                 throw new PaymentException('provider not found');
             break;
         }
+        $this->provider->fake = self::$fake;
     }
 
     public function __call($method, $args)
