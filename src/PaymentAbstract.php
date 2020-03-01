@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use DB;
 use Request;
 use Schema;
+use Sedehi\Payment\Events\TransactionCreated;
 
 abstract class PaymentAbstract
 {
@@ -54,9 +55,10 @@ abstract class PaymentAbstract
                         'updated_at'  => Carbon::now(),
                         'created_at'  => Carbon::now(),
                     ] + $customData;
-        
+
         $insertId = DB::table(config('payment.table'))->insertGetId($data);
         $this->transactionFindById($insertId);
+        event(new TransactionCreated($this->transaction));
     }
 
     public function buildQuery($url, array $query)
